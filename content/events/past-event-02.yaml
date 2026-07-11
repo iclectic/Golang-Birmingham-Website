@@ -1,0 +1,38 @@
+id: "event-003"
+slug: "go-web-services"
+title: "Building RESTful Web Services with Go"
+summary: "Learn how to build robust RESTful APIs using Go, including routing, middleware, authentication, and database integration."
+description: |
+  This comprehensive talk covers building production-ready web services with Go. We'll explore:
+  
+  - HTTP servers and routing with the standard library
+  - Popular frameworks like Gin and Echo
+  - Middleware patterns for logging, authentication, and CORS
+  - Database integration with SQL and NoSQL databases
+  - JSON handling and validation
+  - Authentication and authorization strategies
+  - Testing web services
+  - Deployment and monitoring considerations
+  
+  The talk includes practical examples and a demo of building a complete web service from scratch.
+start_time: "2027-05-15T18:30:00+01:00"
+end_time: "2027-05-15T20:30:00+01:00"
+venue_name: "Digital Birmingham Hub"
+venue_address: "789 Innovation Way, Birmingham, B3 3CC"
+image: "/static/images/events/web-services.jpg"
+topics: ["web-services", "rest", "api", "databases"]
+speakers:
+  - id: "speaker-003"
+    slug: "emma-wilson"
+    name: "Emma Wilson"
+    role: "Backend Developer"
+    organisation: "FinTech Innovations"
+    biography: "Emma is a Backend Developer at FinTech Innovations, specializing in building scalable financial systems. She has been using Go for 6 years and is passionate about clean code, testing, and API design. Emma is also a regular contributor to open-source Go projects."
+    image: "/static/images/speakers/emma-wilson.jpg"
+    linkedin_url: "https://linkedin.com/in/emmawilson"
+    github_url: "https://github.com/emmawilson"
+    website_url: "https://emmawilson.dev"
+registration_url: ""
+video_url: "https://youtube.com/watch?v=example456"
+slides_url: "https://slides.com/emmawilson/go-web-services"
+featured: false

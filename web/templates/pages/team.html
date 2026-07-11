@@ -1,0 +1,137 @@
+{{define "content"}}
+<div class="team-page">
+    <section class="page-header" aria-labelledby="team-title">
+        <div class="container">
+            <h1 id="team-title" class="page-title">Our Team</h1>
+            <p class="page-description">
+                Meet the dedicated volunteers who organise Golang Birmingham and make our community thrive.
+            </p>
+        </div>
+    </section>
+
+    <!-- Team Members -->
+    <section class="team-members" aria-labelledby="team-heading">
+        <div class="container">
+            <h2 id="team-heading" class="section-title">Organising Team</h2>
+            
+            {{if .Team}}
+                <div class="team-grid">
+                    {{range .Team}}
+                    <div class="team-card">
+                        <div class="team-image">
+                            <img src="{{.Image}}" alt="{{.Name}}" loading="lazy">
+                        </div>
+                        <div class="team-content">
+                            <h3 class="team-name">{{.Name}}</h3>
+                            <div class="team-role">{{.Role}}</div>
+                            <p class="team-biography">{{.Biography}}</p>
+                            <div class="team-links">
+                                {{if .LinkedInURL}}
+                                <a href="{{.LinkedInURL}}" class="team-link" target="_blank" rel="noopener noreferrer" aria-label="{{.Name}} on LinkedIn">
+                                    <span class="social-icon social-icon--linkedin"></span>
+                                </a>
+                                {{end}}
+                                {{if .GitHubURL}}
+                                <a href="{{.GitHubURL}}" class="team-link" target="_blank" rel="noopener noreferrer" aria-label="{{.Name}} on GitHub">
+                                    <span class="social-icon social-icon--github"></span>
+                                </a>
+                                {{end}}
+                                {{if .WebsiteURL}}
+                                <a href="{{.WebsiteURL}}" class="team-link" target="_blank" rel="noopener noreferrer" aria-label="{{.Name}} website">
+                                    <span class="social-icon social-icon--website"></span>
+                                </a>
+                                {{end}}
+                            </div>
+                        </div>
+                    </div>
+                    {{end}}
+                </div>
+            {{else}}
+                <div class="empty-state">
+                    <h3>Team information coming soon</h3>
+                    <p>We're currently updating our team information. Check back soon!</p>
+                </div>
+            {{end}}
+        </div>
+    </section>
+
+    <!-- Volunteer Opportunities -->
+    <section class="volunteer-opportunities" aria-labelledby="volunteer-heading">
+        <div class="container">
+            <h2 id="volunteer-heading" class="section-title">Volunteer With Us</h2>
+            <div class="volunteer-content">
+                <p>
+                    Golang Birmingham is run entirely by volunteers who are passionate about building 
+                    a strong Go community in Birmingham. We're always looking for people to help with:
+                </p>
+                <div class="volunteer-roles">
+                    <div class="role-card">
+                        <h3>Event Organisation</h3>
+                        <p>Help plan and coordinate our monthly meetups and special events.</p>
+                    </div>
+                    <div class="role-card">
+                        <h3>Speaker Coordination</h3>
+                        <p>Reach out to potential speakers and help manage our speaking schedule.</p>
+                    </div>
+                    <div class="role-card">
+                        <h3>Community Management</h3>
+                        <p>Manage our online presence and engage with the community.</p>
+                    </div>
+                    <div class="role-card">
+                        <h3>Technical Support</h3>
+                        <p>Help with our website, streaming, and other technical needs.</p>
+                    </div>
+                    <div class="role-card">
+                        <h3>Content Creation</h3>
+                        <p>Write blog posts, create social media content, and document our events.</p>
+                    </div>
+                    <div class="role-card">
+                        <h3>Sponsorship Outreach</h3>
+                        <p>Help us find and work with sponsors to support our community.</p>
+                    </div>
+                </div>
+                <div class="volunteer-cta">
+                    <h3>Interested in volunteering?</h3>
+                    <p>
+                        We'd love to have you join our team! No specific experience is required - 
+                        just enthusiasm for Go and our community.
+                    </p>
+                    <a href="/contact" class="button button--primary button--large">
+                        Get in Touch
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Values -->
+    <section class="team-values" aria-labelledby="values-heading">
+        <div class="container">
+            <h2 id="values-heading" class="section-title">Our Values</h2>
+            <div class="values-content">
+                <p>
+                    As a team, we're committed to:
+                </p>
+                <div class="values-list">
+                    <div class="value-item">
+                        <h3>Inclusivity</h3>
+                        <p>Creating a welcoming environment for everyone, regardless of background or experience level.</p>
+                    </div>
+                    <div class="value-item">
+                        <h3>Community First</h3>
+                        <p>Making decisions that benefit our community and help it grow sustainably.</p>
+                    </div>
+                    <div class="value-item">
+                        <h3>Transparency</h3>
+                        <p>Being open about how we operate and making decisions collaboratively.</p>
+                    </div>
+                    <div class="value-item">
+                        <h3>Continuous Learning</h3>
+                        <p>Encouraging learning and growth for both our team and our community.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{{end}}

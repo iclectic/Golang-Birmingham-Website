@@ -1,0 +1,8 @@
+id: "gallery-003"
+event_slug: "go-testing-strategies"
+year: 2027
+category: "networking"
+image: "/static/images/gallery/networking-testing.jpg"
+thumbnail: "/static/images/gallery/thumbnails/networking-testing.jpg"
+caption: "Community members networking during the break at the testing strategies meetup"
+alt_text: "People networking and chatting during a break at Golang Birmingham meetup, with coffee and refreshments visible"

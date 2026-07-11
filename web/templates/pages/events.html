@@ -1,0 +1,150 @@
+{{define "content"}}
+<div class="events-page">
+    <section class="page-header" aria-labelledby="events-title">
+        <div class="container">
+            <h1 id="events-title" class="page-title">Events</h1>
+            <p class="page-description">
+                Join us for technical talks, workshops, and networking events in Birmingham.
+            </p>
+        </div>
+    </section>
+
+    <!-- Upcoming Events -->
+    <section class="upcoming-events" aria-labelledby="upcoming-events-title">
+        <div class="container">
+            <h2 id="upcoming-events-title" class="section-title">Upcoming Events</h2>
+            
+            {{if .RecentEvents}}
+                {{range .RecentEvents}}
+                    {{if .StartTime.After now}}
+                        <div class="event-card">
+                            <div class="event-image">
+                                <img src="{{.Image}}" alt="{{.Title}}" loading="lazy">
+                                {{if .VideoURL}}
+                                <div class="event-badge event-badge--recording">Recording Available</div>
+                                {{end}}
+                            </div>
+                            <div class="event-content">
+                                <div class="event-meta">
+                                    <time datetime="{{.StartTime.Format "2006-01-02T15:04:05Z07:00"}}">
+                                        {{.StartTime.Format "January 2, 2006"}}
+                                    </time>
+                                    <span class="event-time">
+                                        {{.StartTime.Format "15:04"}} - {{.EndTime.Format "15:04"}}
+                                    </span>
+                                </div>
+                                <h3 class="event-title">{{.Title}}</h3>
+                                <p class="event-summary">{{.Summary}}</p>
+                                <div class="event-details">
+                                    <div class="event-venue">
+                                        <strong>Venue:</strong> {{.VenueName}}
+                                    </div>
+                                    <div class="event-address">
+                                        {{.VenueAddress}}
+                                    </div>
+                                </div>
+                                {{if .Speakers}}
+                                <div class="event-speakers">
+                                    {{range .Speakers}}
+                                    <div class="speaker-mini">
+                                        <img src="{{.Image}}" alt="{{.Name}}" loading="lazy">
+                                        <div>
+                                            <div class="speaker-name">{{.Name}}</div>
+                                            <div class="speaker-role">{{.Role}}, {{.Organisation}}</div>
+                                        </div>
+                                    </div>
+                                    {{end}}
+                                </div>
+                                {{end}}
+                                <div class="event-actions">
+                                    {{if .RegistrationURL}}
+                                    <a href="{{.RegistrationURL}}" class="button button--primary" target="_blank" rel="noopener noreferrer">
+                                        Register Now
+                                    </a>
+                                    {{end}}
+                                    <a href="/events/{{.Slug}}" class="button button--secondary">
+                                        View Details
+                                    </a>
+                                    <a href="/events/calendar/{{.Slug}}" class="button button--outline">
+                                        Add to Calendar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {{end}}
+                {{end}}
+            {{else}}
+                <div class="empty-state">
+                    <h3>No upcoming events</h3>
+                    <p>We're currently planning our next events. Check back soon or follow us on social media for updates.</p>
+                    <a href="{{.Site.MeetupURL}}" class="button button--primary" target="_blank" rel="noopener noreferrer">
+                        Follow on Meetup
+                    </a>
+                </div>
+            {{end}}
+        </div>
+    </section>
+
+    <!-- Past Events -->
+    <section class="past-events" aria-labelledby="past-events-title">
+        <div class="container">
+            <h2 id="past-events-title" class="section-title">Past Events</h2>
+            
+            {{if .RecentEvents}}
+                <div class="events-grid">
+                    {{range .RecentEvents}}
+                        {{if not .StartTime.After now}}
+                            <div class="event-card">
+                                <div class="event-image">
+                                    <img src="{{.Image}}" alt="{{.Title}}" loading="lazy">
+                                    {{if .VideoURL}}
+                                    <div class="event-badge event-badge--recording">Recording Available</div>
+                                    {{end}}
+                                </div>
+                                <div class="event-content">
+                                    <div class="event-meta">
+                                        <time datetime="{{.StartTime.Format "2006-01-02"}}">
+                                            {{.StartTime.Format "January 2, 2006"}}
+                                        </time>
+                                    </div>
+                                    <h3 class="event-title">{{.Title}}</h3>
+                                    {{if .Speakers}}
+                                    <div class="event-speaker">
+                                        {{range .Speakers}}
+                                        {{.Name}}{{if .Role}}, {{.Role}}{{end}}
+                                        {{end}}
+                                    </div>
+                                    {{end}}
+                                    <p class="event-summary">{{.Summary}}</p>
+                                    <a href="/events/{{.Slug}}" class="event-link">View Event</a>
+                                </div>
+                            </div>
+                        {{end}}
+                    {{end}}
+                </div>
+            {{else}}
+                <div class="empty-state">
+                    <h3>No past events yet</h3>
+                    <p>We're just getting started! Our first events will be announced soon.</p>
+                </div>
+            {{end}}
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="events-cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Want to speak at Golang Birmingham?</h2>
+                <p>
+                    We're always looking for speakers to share their knowledge and experience with the community. 
+                    Whether you're new to speaking or an experienced presenter, we'd love to hear from you.
+                </p>
+                <a href="{{.Site.SpeakerFormURL}}" class="button button--primary button--large" target="_blank" rel="noopener noreferrer">
+                    Submit a Talk
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+{{end}}

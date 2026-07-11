@@ -1,0 +1,367 @@
+{{define "content"}}
+<div class="home">
+    <!-- Hero Section -->
+    <section class="hero" role="banner">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 class="hero-title">Golang Birmingham</h1>
+                    <p class="hero-subtitle">
+                        Bringing Birmingham's Go community together to learn, build and connect.
+                    </p>
+                    <p class="hero-description">
+                        Join us for technical talks, practical workshops, and networking opportunities 
+                        with Go developers, software engineers, and technology enthusiasts in the heart of Birmingham.
+                    </p>
+                    <div class="hero-actions">
+                        <a href="/events" class="button button--primary button--large">
+                            View Our Next Event
+                        </a>
+                        <a href="/contact" class="button button--secondary button--large">
+                            Become a Speaker
+                        </a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <img src="/static/images/gopher/gopher-hero.svg" alt="Go Gopher mascot" class="hero-gopher">
+                    <div class="hero-code">
+                        <pre><code>package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Hello, Birmingham!")
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Statistics -->
+    <section class="stats" aria-labelledby="stats-heading">
+        <div class="container">
+            <h2 id="stats-heading" class="visually-hidden">Community Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">{{.Site.Stats.Members}}</div>
+                    <div class="stat-label">Community Members</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{.Site.Stats.Events}}</div>
+                    <div class="stat-label">Events Organised</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{.Site.Stats.Speakers}}</div>
+                    <div class="stat-label">Speakers Hosted</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{.Site.Stats.Talks}}</div>
+                    <div class="stat-label">Talks Recorded</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What We Do -->
+    <section class="features" aria-labelledby="features-heading">
+        <div class="container">
+            <h2 id="features-heading" class="section-title">What We Do</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon feature-icon--talks"></div>
+                    <h3 class="feature-title">Technical Talks</h3>
+                    <p class="feature-description">
+                        Talks about Go, backend development, APIs, microservices, cloud engineering, 
+                        testing, observability, performance, security and software architecture.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon feature-icon--workshops"></div>
+                    <h3 class="feature-title">Practical Workshops</h3>
+                    <p class="feature-description">
+                        Hands-on sessions where attendees can develop practical Go skills 
+                        through coding exercises and real-world examples.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon feature-icon--networking"></div>
+                    <h3 class="feature-title">Community Networking</h3>
+                    <p class="feature-description">
+                        Opportunities to meet developers, engineers, founders, students and 
+                        technology professionals from Birmingham and surrounding areas.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon feature-icon--inclusive"></div>
+                    <h3 class="feature-title">Open Community</h3>
+                    <p class="feature-description">
+                        A welcoming community for people at different experience levels and from 
+                        different professional and personal backgrounds.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upcoming Event -->
+    {{if .UpcomingEvent}}
+    <section class="upcoming-event" aria-labelledby="upcoming-heading">
+        <div class="container">
+            <h2 id="upcoming-heading" class="section-title">Next Event</h2>
+            <div class="event-card event-card--featured">
+                <div class="event-image">
+                    <img src="{{.UpcomingEvent.Image}}" alt="{{.UpcomingEvent.Title}}" loading="lazy">
+                </div>
+                <div class="event-content">
+                    <div class="event-meta">
+                        <time datetime="{{.UpcomingEvent.StartTime.Format "2006-01-02T15:04:05Z07:00"}}">
+                            {{.UpcomingEvent.StartTime.Format "January 2, 2006"}}
+                        </time>
+                        <span class="event-time">
+                            {{.UpcomingEvent.StartTime.Format "15:04"}} - {{.UpcomingEvent.EndTime.Format "15:04"}}
+                        </span>
+                    </div>
+                    <h3 class="event-title">{{.UpcomingEvent.Title}}</h3>
+                    <p class="event-summary">{{.UpcomingEvent.Summary}}</p>
+                    <div class="event-details">
+                        <div class="event-venue">
+                            <strong>Venue:</strong> {{.UpcomingEvent.VenueName}}
+                        </div>
+                        <div class="event-address">
+                            {{.UpcomingEvent.VenueAddress}}
+                        </div>
+                    </div>
+                    {{if .UpcomingEvent.Speakers}}
+                    <div class="event-speakers">
+                        {{range .UpcomingEvent.Speakers}}
+                        <div class="speaker-mini">
+                            <img src="{{.Image}}" alt="{{.Name}}" loading="lazy">
+                            <div>
+                                <div class="speaker-name">{{.Name}}</div>
+                                <div class="speaker-role">{{.Role}}, {{.Organisation}}</div>
+                            </div>
+                        </div>
+                        {{end}}
+                    </div>
+                    {{end}}
+                    <div class="event-actions">
+                        <a href="{{.UpcomingEvent.RegistrationURL}}" class="button button--primary" target="_blank" rel="noopener noreferrer">
+                            Reserve Your Place
+                        </a>
+                        <a href="/events/{{.UpcomingEvent.Slug}}" class="button button--secondary">
+                            View Event Details
+                        </a>
+                        <a href="/events/{{.UpcomingEvent.Slug}}/calendar" class="button button--outline">
+                            Add to Calendar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {{end}}
+
+    <!-- Why Join -->
+    <section class="why-join" aria-labelledby="why-join-heading">
+        <div class="container">
+            <h2 id="why-join-heading" class="section-title">Why Join Golang Birmingham?</h2>
+            <div class="why-join-grid">
+                <div class="why-join-item">
+                    <h3 class="why-join-title">Learn from Experts</h3>
+                    <p class="why-join-description">
+                        Learn from experienced Go developers and discover practical techniques 
+                        used in production environments.
+                    </p>
+                </div>
+                <div class="why-join-item">
+                    <h3 class="why-join-title">Real-World Go</h3>
+                    <p class="why-join-description">
+                        Learn how Go is used in production systems, from startups to large-scale 
+                        distributed applications.
+                    </p>
+                </div>
+                <div class="why-join-item">
+                    <h3 class="why-join-title">Network & Connect</h3>
+                    <p class="why-join-description">
+                        Meet other engineers, share projects and ideas, find collaborators, 
+                        and build lasting professional relationships.
+                    </p>
+                </div>
+                <div class="why-join-item">
+                    <h3 class="why-join-title">Develop Skills</h3>
+                    <p class="why-join-description">
+                        Gain public-speaking experience, contribute to open source, 
+                        and participate in Birmingham's technology community.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Events -->
+    {{if .RecentEvents}}
+    <section class="recent-events" aria-labelledby="recent-heading">
+        <div class="container">
+            <h2 id="recent-heading" class="section-title">Recent Events</h2>
+            <div class="events-grid">
+                {{range .RecentEvents}}
+                <div class="event-card">
+                    <div class="event-image">
+                        <img src="{{.Image}}" alt="{{.Title}}" loading="lazy">
+                        {{if .VideoURL}}
+                        <div class="event-badge event-badge--recording">Recording Available</div>
+                        {{end}}
+                    </div>
+                    <div class="event-content">
+                        <div class="event-meta">
+                            <time datetime="{{.StartTime.Format "2006-01-02"}}">
+                                {{.StartTime.Format "January 2, 2006"}}
+                            </time>
+                        </div>
+                        <h3 class="event-title">{{.Title}}</h3>
+                        {{if .Speakers}}
+                        <div class="event-speaker">
+                            {{range .Speakers}}
+                            {{.Name}}{{if .Role}}, {{.Role}}{{end}}
+                            {{end}}
+                        </div>
+                        {{end}}
+                        <p class="event-summary">{{.Summary}}</p>
+                        <a href="/events/{{.Slug}}" class="event-link">View Event</a>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+            <div class="section-actions">
+                <a href="/events" class="button button--secondary">View All Events</a>
+            </div>
+        </div>
+    </section>
+    {{end}}
+
+    <!-- Go Topics -->
+    <section class="topics" aria-labelledby="topics-heading">
+        <div class="container">
+            <h2 id="topics-heading" class="section-title">Go Topics We Explore</h2>
+            <div class="topics-grid">
+                <div class="topic-card">
+                    <div class="topic-icon topic-icon--web"></div>
+                    <h3 class="topic-title">Web Services</h3>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-icon topic-icon--cloud"></div>
+                    <h3 class="topic-title">Cloud-Native</h3>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-icon topic-icon--cli"></div>
+                    <h3 class="topic-title">Command Line</h3>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-icon topic-icon--concurrency"></div>
+                    <h3 class="topic-title">Concurrency</h3>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-icon topic-icon--distributed"></div>
+                    <h3 class="topic-title">Distributed Systems</h3>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-icon topic-icon--testing"></div>
+                    <h3 class="topic-title">Testing</h3>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-icon topic-icon--observability"></div>
+                    <h3 class="topic-title">Observability</h3>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-icon topic-icon--containers"></div>
+                    <h3 class="topic-title">Containers</h3>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-icon topic-icon--kubernetes"></div>
+                    <h3 class="topic-title">Kubernetes</h3>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-icon topic-icon--security"></div>
+                    <h3 class="topic-title">Security</h3>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-icon topic-icon--opensource"></div>
+                    <h3 class="topic-title">Open Source</h3>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-icon topic-icon--performance"></div>
+                    <h3 class="topic-title">Performance</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Speaker Call to Action -->
+    <section class="speaker-cta" aria-labelledby="speaker-cta-heading">
+        <div class="container">
+            <div class="cta-content">
+                <h2 id="speaker-cta-heading" class="cta-title">
+                    Have something to share with Birmingham's Go community?
+                </h2>
+                <p class="cta-description">
+                    We welcome talks on technical topics, production case studies, lightning talks, 
+                    workshops, live coding sessions, open-source demonstrations, beginner-friendly 
+                    introductions, and lessons learned from real projects.
+                </p>
+                <a href="{{.Site.SpeakerFormURL}}" class="button button--primary button--large" target="_blank" rel="noopener noreferrer">
+                    Submit a Talk
+                </a>
+            </div>
+            <div class="cta-visual">
+                <img src="/static/images/gopher/gopher-speaker.svg" alt="Go Gopher with microphone" loading="lazy">
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Preview -->
+    {{if .GalleryPreview}}
+    <section class="gallery-preview" aria-labelledby="gallery-heading">
+        <div class="container">
+            <h2 id="gallery-heading" class="section-title">Community Gallery</h2>
+            <div class="gallery-grid">
+                {{range .GalleryPreview}}
+                <a href="/gallery#{{.ID}}" class="gallery-item">
+                    <img src="{{.Thumbnail}}" alt="{{.AltText}}" loading="lazy">
+                    <div class="gallery-caption">{{.Caption}}</div>
+                </a>
+                {{end}}
+            </div>
+            <div class="section-actions">
+                <a href="/gallery" class="button button--secondary">View Full Gallery</a>
+            </div>
+        </div>
+    </section>
+    {{end}}
+
+    <!-- Sponsors -->
+    {{if .Sponsors}}
+    <section class="sponsors" aria-labelledby="sponsors-heading">
+        <div class="container">
+            <h2 id="sponsors-heading" class="section-title">Our Sponsors & Partners</h2>
+            <div class="sponsors-grid">
+                {{range .Sponsors}}
+                <div class="sponsor-card">
+                    <a href="{{.WebsiteURL}}" class="sponsor-link" target="_blank" rel="noopener noreferrer">
+                        <img src="{{.Logo}}" alt="{{.Name}}" loading="lazy">
+                    </a>
+                    <div class="sponsor-info">
+                        <div class="sponsor-name">{{.Name}}</div>
+                        <div class="sponsor-category">{{.Category}}</div>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+            <div class="section-actions">
+                <a href="/contact" class="button button--secondary">Support Golang Birmingham</a>
+            </div>
+        </div>
+    </section>
+    {{end}}
+</div>
+{{end}}

@@ -1,0 +1,61 @@
+{{define "footer"}}
+<footer class="footer" role="contentinfo">
+    <div class="footer-container">
+        <div class="footer-section">
+            <h3 class="footer-title">Golang Birmingham</h3>
+            <p class="footer-description">
+                Bringing Birmingham's Go community together to learn, build and connect.
+            </p>
+            <div class="footer-social">
+                {{range $key, $url := .Site.SocialLinks}}
+                <a href="{{$url}}" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Golang Birmingham on {{$key}}">
+                    <span class="social-icon social-icon--{{$key}}"></span>
+                </a>
+                {{end}}
+            </div>
+        </div>
+        
+        <div class="footer-section">
+            <h3 class="footer-title">Community</h3>
+            <ul class="footer-links">
+                <li><a href="/events">Events</a></li>
+                <li><a href="/speakers">Speakers</a></li>
+                <li><a href="/team">Team</a></li>
+                <li><a href="/gallery">Gallery</a></li>
+            </ul>
+        </div>
+        
+        <div class="footer-section">
+            <h3 class="footer-title">Resources</h3>
+            <ul class="footer-links">
+                <li><a href="/about">About</a></li>
+                <li><a href="/code-of-conduct">Code of Conduct</a></li>
+                <li><a href="/contact">Contact</a></li>
+                <li><a href="/privacy">Privacy</a></li>
+            </ul>
+        </div>
+        
+        <div class="footer-section">
+            <h3 class="footer-title">Get Involved</h3>
+            <p class="footer-description">
+                Want to speak at an event or help organise the community?
+            </p>
+            <a href="/contact" class="footer-button">Get in Touch</a>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <div class="footer-bottom-container">
+            <p class="footer-disclaimer">
+                Golang Birmingham is an independently organised community group and is not affiliated with or endorsed by Google or the Go project.
+            </p>
+            <p class="footer-attribution">
+                The Go Gopher was designed by Renée French and is licensed under the Creative Commons Attribution 4.0 licence.
+            </p>
+            <p class="footer-copyright">
+                © {{.Year}} Golang Birmingham. All rights reserved.
+            </p>
+        </div>
+    </div>
+</footer>
+{{end}}

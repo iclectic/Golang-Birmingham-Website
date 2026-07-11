@@ -1,0 +1,8 @@
+id: "gallery-004"
+event_slug: "go-microservices-workshop"
+year: 2027
+category: "workshops"
+image: "/static/images/gallery/workshop-microservices.jpg"
+thumbnail: "/static/images/gallery/thumbnails/workshop-microservices.jpg"
+caption: "Hands-on coding during the Building Microservices with Go workshop"
+alt_text: "People working on laptops during a hands-on Go microservices workshop, with code visible on screens"

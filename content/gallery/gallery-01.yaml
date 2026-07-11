@@ -1,0 +1,8 @@
+id: "gallery-001"
+event_slug: "go-concurrency-patterns"
+year: 2027
+category: "speakers"
+image: "/static/images/gallery/speaker-mike.jpg"
+thumbnail: "/static/images/gallery/thumbnails/speaker-mike.jpg"
+caption: "Mike Johnson presenting on Advanced Concurrency Patterns in Go"
+alt_text: "Speaker Mike Johnson presenting at Golang Birmingham meetup with slides about Go concurrency patterns visible on screen"

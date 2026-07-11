@@ -1,0 +1,44 @@
+id: "event-001"
+slug: "go-microservices-workshop"
+title: "Building Microservices with Go"
+summary: "A hands-on workshop on designing and implementing microservices using Go, including patterns, best practices, and deployment strategies."
+description: |
+  Join us for an intensive workshop on building microservices with Go! This session will cover:
+  
+  - Microservice architecture patterns and when to use them
+  - Designing resilient services with proper error handling
+  - Inter-service communication patterns (REST, gRPC, message queues)
+  - Service discovery and configuration management
+  - Observability: logging, metrics, and distributed tracing
+  - Containerization and deployment strategies
+  - Real-world examples and case studies
+  
+  This is a hands-on workshop, so bring your laptop with Go installed. We'll be building actual microservices throughout the session.
+  
+  Prerequisites:
+  - Basic Go programming knowledge
+  - Understanding of web concepts (HTTP, APIs)
+  - Laptop with Go 1.21+ installed
+  
+  Food and drinks will be provided.
+start_time: "2027-07-25T18:30:00+01:00"
+end_time: "2027-07-25T21:00:00+01:00"
+venue_name: "Birmingham Tech Hub"
+venue_address: "123 Innovation Street, Birmingham, B1 1AA"
+image: "/static/images/events/microservices-workshop.jpg"
+topics: ["microservices", "workshop", "architecture", "golang"]
+speakers:
+  - id: "speaker-001"
+    slug: "sarah-chen"
+    name: "Sarah Chen"
+    role: "Senior Software Engineer"
+    organisation: "TechCorp Solutions"
+    biography: "Sarah is a Senior Software Engineer with 8 years of experience building distributed systems. She's passionate about Go and has been using it in production for over 5 years. Sarah has spoken at several conferences including GopherCon and KubeCon."
+    image: "/static/images/speakers/sarah-chen.jpg"
+    linkedin_url: "https://linkedin.com/in/sarahchen"
+    github_url: "https://github.com/sarahchen"
+    website_url: "https://sarahchen.dev"
+registration_url: "https://meetup.com/golang-birmingham/events/123456789"
+video_url: ""
+slides_url: ""
+featured: true

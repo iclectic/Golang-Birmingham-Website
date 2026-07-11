@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}} - Golang Birmingham</title>
+    <meta name="description" content="{{.Description}}">
+    <link rel="canonical" href="{{.CanonicalURL}}">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{.Title}} - Golang Birmingham">
+    <meta property="og:description" content="{{.Description}}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{.CanonicalURL}}">
+    <meta property="og:image" content="{{.BaseURL}}/static/images/og-image.jpg">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{.Title}} - Golang Birmingham">
+    <meta name="twitter:description" content="{{.Description}}">
+    <meta name="twitter:image" content="{{.BaseURL}}/static/images/og-image.jpg">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/images/favicon-16x16.png">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    
+    <!-- Preload critical fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    {{template "header" .}}
+    
+    <main id="main-content">
+        {{template "content" .}}
+    </main>
+    
+    {{template "footer" .}}
+    
+    <!-- Minimal JavaScript for progressive enhancement -->
+    <script src="/static/js/main.js" defer></script>
+</body>
+</html>

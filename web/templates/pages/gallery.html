@@ -1,0 +1,161 @@
+{{define "content"}}
+<div class="gallery-page">
+    <section class="page-header" aria-labelledby="gallery-title">
+        <div class="container">
+            <h1 id="gallery-title" class="page-title">Community Gallery</h1>
+            <p class="page-description">
+                Photos from our events, meetups, and community gatherings in Birmingham.
+            </p>
+        </div>
+    </section>
+
+    <!-- Gallery Filters -->
+    <section class="gallery-filters" aria-labelledby="filters-heading">
+        <div class="container">
+            <h2 id="filters-heading" class="visually-hidden">Filter Gallery</h2>
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <label for="event-filter">Filter by Event:</label>
+                    <select id="event-filter" name="event">
+                        <option value="">All Events</option>
+                        <!-- Event options would be populated dynamically -->
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="category-filter">Filter by Category:</label>
+                    <select id="category-filter" name="category">
+                        <option value="">All Categories</option>
+                        <option value="speakers">Speakers</option>
+                        <option value="audience">Audience</option>
+                        <option value="networking">Networking</option>
+                        <option value="workshops">Workshops</option>
+                        <option value="venue">Venue</option>
+                        <option value="organisers">Organisers</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="year-filter">Filter by Year:</label>
+                    <select id="year-filter" name="year">
+                        <option value="">All Years</option>
+                        <option value="2027">2027</option>
+                        <option value="2026">2026</option>
+                        <option value="2025">2025</option>
+                    </select>
+                </div>
+                <button type="button" class="button button--secondary" id="clear-filters">
+                    Clear Filters
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Grid -->
+    <section class="gallery-grid-section" aria-labelledby="gallery-heading">
+        <div class="container">
+            <h2 id="gallery-heading" class="visually-hidden">Event Photos</h2>
+            
+            {{if .Gallery}}
+                <div class="gallery-grid" id="gallery-container">
+                    {{range .Gallery}}
+                    <div class="gallery-item" 
+                         data-event="{{.EventSlug}}" 
+                         data-category="{{.Category}}" 
+                         data-year="{{.Year}}"
+                         id="{{.ID}}">
+                        <a href="#{{.ID}}" class="gallery-link" role="button" aria-label="View larger image: {{.Caption}}">
+                            <img src="{{.Thumbnail}}" alt="{{.AltText}}" loading="lazy">
+                            <div class="gallery-overlay">
+                                <div class="gallery-caption">{{.Caption}}</div>
+                                <div class="gallery-meta">
+                                    <span class="gallery-category">{{.Category}}</span>
+                                    <span class="gallery-year">{{.Year}}</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    {{end}}
+                </div>
+            {{else}}
+                <div class="empty-state">
+                    <h3>No photos yet</h3>
+                    <p>We're just getting started! Photos from our events will be added soon.</p>
+                </div>
+            {{end}}
+        </div>
+    </section>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
+        <div class="lightbox-content">
+            <button class="lightbox-close" id="lightbox-close" aria-label="Close image viewer">&times;</button>
+            <img src="" alt="" class="lightbox-image" id="lightbox-image">
+            <div class="lightbox-info">
+                <h3 class="lightbox-title" id="lightbox-title"></h3>
+                <p class="lightbox-caption" id="lightbox-caption"></p>
+            </div>
+            <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Previous image">&lsaquo;</button>
+            <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Next image">&rsaquo;</button>
+        </div>
+    </div>
+
+    <!-- Photo Credits -->
+    <section class="photo-credits" aria-labelledby="credits-heading">
+        <div class="container">
+            <h2 id="credits-heading" class="section-title">Photo Credits</h2>
+            <div class="credits-content">
+                <p>
+                    Photos are taken by community members and event photographers. 
+                    If you have photos from our events that you'd like to share, 
+                    please get in touch with us!
+                </p>
+                <p>
+                    By attending Golang Birmingham events, you consent to being photographed 
+                    for use in our community gallery and promotional materials. 
+                    If you prefer not to be photographed, please let us know.
+                </p>
+                <a href="/contact" class="button button--secondary">
+                    Submit Your Photos
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Guidelines -->
+    <section class="photo-guidelines" aria-labelledby="guidelines-heading">
+        <div class="container">
+            <h2 id="guidelines-heading" class="section-title">Photo Guidelines</h2>
+            <div class="guidelines-content">
+                <div class="guideline-section">
+                    <h3>For Photographers</h3>
+                    <ul>
+                        <li>Focus on capturing the community atmosphere and learning moments</li>
+                        <li>Be respectful of attendees' privacy and preferences</li>
+                        <li>Avoid taking photos during sensitive discussions or presentations</li>
+                        <li>Share high-quality images (minimum 1200px width)</li>
+                        <li>Include event name and date in your submission</li>
+                    </ul>
+                </div>
+                <div class="guideline-section">
+                    <h3>For Attendees</h3>
+                    <ul>
+                        <li>Feel free to take photos during networking and social moments</li>
+                        <li>Please avoid photography during presentations unless explicitly permitted</li>
+                        <li>Respect others' privacy - ask before taking close-up photos</li>
+                        <li>Share your photos with us using our community hashtag</li>
+                        <li>Let us know if you prefer not to be photographed</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+// Gallery functionality would be implemented here
+// This is a placeholder for the JavaScript that would handle:
+// - Filtering gallery items
+// - Opening/closing the lightbox
+// - Navigation between images
+// - Keyboard accessibility
+</script>
+{{end}}

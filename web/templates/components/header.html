@@ -1,0 +1,88 @@
+{{define "header"}}
+<header class="header" role="banner">
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="/" class="brand-link" aria-label="Golang Birmingham home">
+                    <span class="brand-text">Golang Birmingham</span>
+                </a>
+            </div>
+            
+            <!-- Desktop Navigation -->
+            <ul class="nav-list nav-list--desktop">
+                <li class="nav-item">
+                    <a href="/" class="nav-link {{if eq .ActivePage "home"}}nav-link--active{{end}}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/events" class="nav-link {{if eq .ActivePage "events"}}nav-link--active{{end}}">Events</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/about" class="nav-link {{if eq .ActivePage "about"}}nav-link--active{{end}}">About</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/speakers" class="nav-link {{if eq .ActivePage "speakers"}}nav-link--active{{end}}">Speakers</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/team" class="nav-link {{if eq .ActivePage "team"}}nav-link--active{{end}}">Team</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/gallery" class="nav-link {{if eq .ActivePage "gallery"}}nav-link--active{{end}}">Gallery</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/code-of-conduct" class="nav-link {{if eq .ActivePage "code-of-conduct"}}nav-link--active{{end}}">Code of Conduct</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/contact" class="nav-link {{if eq .ActivePage "contact"}}nav-link--active{{end}}">Contact</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{.Site.MeetupURL}}" class="nav-button" target="_blank" rel="noopener noreferrer">
+                        Join the Community
+                    </a>
+                </li>
+            </ul>
+            
+            <!-- Mobile menu button -->
+            <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+            </button>
+        </div>
+        
+        <!-- Mobile Navigation -->
+        <div id="mobile-menu" class="nav-mobile" role="navigation" aria-label="Mobile navigation">
+            <ul class="nav-list nav-list--mobile">
+                <li class="nav-item">
+                    <a href="/" class="nav-link {{if eq .ActivePage "home"}}nav-link--active{{end}}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/events" class="nav-link {{if eq .ActivePage "events"}}nav-link--active{{end}}">Events</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/about" class="nav-link {{if eq .ActivePage "about"}}nav-link--active{{end}}">About</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/speakers" class="nav-link {{if eq .ActivePage "speakers"}}nav-link--active{{end}}">Speakers</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/team" class="nav-link {{if eq .ActivePage "team"}}nav-link--active{{end}}">Team</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/gallery" class="nav-link {{if eq .ActivePage "gallery"}}nav-link--active{{end}}">Gallery</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/code-of-conduct" class="nav-link {{if eq .ActivePage "code-of-conduct"}}nav-link--active{{end}}">Code of Conduct</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/contact" class="nav-link {{if eq .ActivePage "contact"}}nav-link--active{{end}}">Contact</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{.Site.MeetupURL}}" class="nav-button" target="_blank" rel="noopener noreferrer">
+                        Join the Community
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+{{end}}
