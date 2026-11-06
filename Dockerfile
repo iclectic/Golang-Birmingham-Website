@@ -1,57 +1,20 @@
-# Multi-stage Dockerfile for Golang Birmingham Website
-# Stage 1: Build stage
-FROM golang:1.21-alpine AS builder
+# syntax=docker/dockerfile:1
 
-# Install build dependencies
-RUN apk add --no-cache git ca-certificates tzdata
-
-# Set working directory
-WORKDIR /app
-
-# Copy go mod files
+FROM golang:1.22-alpine AS build
+WORKDIR /src
 COPY go.mod go.sum ./
-
-# Download dependencies
 RUN go mod download
-
-# Copy source code
 COPY . .
+# Fail the image build early if any content file is invalid.
+RUN go test ./internal/content
+RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /out/web ./cmd/web
 
-# Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd/web
-
-# Stage 2: Runtime stage
-FROM alpine:latest
-
-# Install runtime dependencies
-RUN apk --no-cache add ca-certificates tzdata
-
-# Create non-root user
-RUN addgroup -g 1001 -S appgroup && \
-    adduser -u 1001 -S appuser -G appgroup
-
-# Set working directory
+FROM gcr.io/distroless/static-debian12:nonroot
 WORKDIR /app
-
-# Copy binary from builder stage
-COPY --from=builder /app/main .
-
-# Copy static files and templates
-COPY --from=builder /app/web ./web
-COPY --from=builder /app/content ./content
-
-# Change ownership to non-root user
-RUN chown -R appuser:appgroup /app
-
-# Switch to non-root user
-USER appuser
-
-# Expose port
+# Templates and static assets are embedded in the binary; content stays editable.
+COPY --from=build /out/web /app/web
+COPY content /app/content
+ENV PORT=8080 ENVIRONMENT=production CONTENT_DIR=/app/content
 EXPOSE 8080
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
-
-# Run the application
-CMD ["./main"]
+USER nonroot:nonroot
+ENTRYPOINT ["/app/web"]

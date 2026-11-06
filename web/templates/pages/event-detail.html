@@ -1,0 +1,60 @@
+{{define "content"}}
+{{with .Event}}
+<section class="page-hero page-hero--event">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/events">Events</a> <span aria-hidden="true">/</span> <span aria-current="page">{{.Title}}</span></nav>
+        <p class="eyebrow">{{if $.EventIsPast}}Past event{{else}}Upcoming event{{end}}</p>
+        <h1 class="page-hero__title">{{.Title}}</h1>
+        <p class="page-hero__lead">{{.Summary}}</p>
+        {{if .Topics}}<ul class="tags">{{range .Topics}}<li class="tag">{{.}}</li>{{end}}</ul>{{end}}
+    </div>
+</section>
+
+<section class="section">
+    <div class="container detail">
+        <aside class="detail__card" aria-label="Event information">
+            <dl class="facts">
+                <div><dt>{{template "icon-calendar"}} Date</dt><dd><time datetime="{{iso .StartTime}}">{{date .StartTime "Monday 2 January 2006"}}</time></dd></div>
+                <div><dt>{{template "icon-clock"}} Time</dt><dd>{{date .StartTime "15:04"}}–{{date .EndTime "15:04"}} (UK time)</dd></div>
+                <div><dt>{{template "icon-pin"}} Venue</dt><dd>{{.VenueName}}{{if .VenueAddress}}<br><span class="muted">{{.VenueAddress}}</span><br><a href="{{mapsURL (printf "%s, %s" .VenueName .VenueAddress)}}" target="_blank" rel="noopener" class="text-link">Open in Maps {{template "icon-external"}}</a>{{end}}</dd></div>
+            </dl>
+            <div class="detail__actions">
+                {{if $.EventIsPast}}
+                    {{if .VideoURL}}<a href="{{.VideoURL}}" class="button button--primary button--block" target="_blank" rel="noopener">{{template "icon-play"}} Watch the recording</a>{{end}}
+                    {{if .SlidesURL}}<a href="{{.SlidesURL}}" class="button button--secondary button--block" target="_blank" rel="noopener">{{template "icon-slides"}} View slides</a>{{end}}
+                    {{if not (or .VideoURL .SlidesURL)}}<p class="muted">This event has finished. See <a href="/events">upcoming events</a>.</p>{{end}}
+                {{else}}
+                    {{if .RegistrationURL}}<a href="{{.RegistrationURL}}" class="button button--primary button--block" target="_blank" rel="noopener">RSVP on Meetup {{template "icon-external"}}</a>{{end}}
+                    <a href="/events/{{.Slug}}/calendar.ics" class="button button--secondary button--block">{{template "icon-calendar"}} Add to calendar</a>
+                    <p class="muted small">Free to attend. Please RSVP so we order enough food.</p>
+                {{end}}
+            </div>
+        </aside>
+
+        <article class="detail__main">
+            <h2 class="detail__heading">About this event</h2>
+            <div class="prose">{{paragraphs .Description}}</div>
+
+            {{if .Speakers}}
+            <h2 class="detail__heading">{{if gt (len .Speakers) 1}}Speakers{{else}}Speaker{{end}}</h2>
+            <div class="stack">
+                {{range .Speakers}}
+                <div class="person person--row">
+                    {{template "avatar" .}}
+                    <div>
+                        <h3 class="person__name">{{.Name}}</h3>
+                        <p class="person__role">{{.Role}}{{if .Organisation}}, {{.Organisation}}{{end}}</p>
+                        <p>{{.Biography}}</p>
+                        {{template "profile-links" .}}
+                    </div>
+                </div>
+                {{end}}
+            </div>
+            {{end}}
+
+            <p class="detail__back"><a href="/events" class="text-link">← All events</a></p>
+        </article>
+    </div>
+</section>
+{{end}}
+{{end}}

@@ -1,0 +1,93 @@
+{{define "content"}}
+<section class="page-hero">
+    <div class="container">
+        <p class="eyebrow">Speaking</p>
+        <h1 class="page-hero__title">Speak at Golang Birmingham</h1>
+        <p class="page-hero__lead">Our meetups are powered by the community. If you've built something, learned something or broken something with Go, people here want to hear about it. First-time speakers are especially welcome.</p>
+        <div class="page-hero__actions">
+            <a href="{{.Site.SpeakerFormURL}}" class="button button--primary" target="_blank" rel="noopener">Submit a talk idea {{template "icon-external"}}</a>
+            <a href="mailto:{{.Site.ContactEmail}}?subject=Talk%20idea%20for%20Golang%20Birmingham" class="button button--secondary">Email the organisers</a>
+        </div>
+    </div>
+</section>
+
+<section class="section" aria-labelledby="formats-heading">
+    <div class="container">
+        <div class="section__header">
+            <p class="eyebrow">Formats</p>
+            <h2 class="section__title" id="formats-heading">Pick a format that suits you</h2>
+        </div>
+        <div class="grid grid--3">
+            <div class="feature"><span class="feature__icon">{{template "icon-clock"}}</span><h3>Lightning talk</h3><p class="feature__meta">5–10 minutes</p><p>One idea, one tool, one lesson learned. The perfect first talk and a great way to test the waters.</p></div>
+            <div class="feature"><span class="feature__icon">{{template "icon-mic"}}</span><h3>Full talk</h3><p class="feature__meta">20–30 minutes + Q&amp;A</p><p>Go deeper on a topic: a production story, a library walkthrough, a design pattern or a look under the hood.</p></div>
+            <div class="feature"><span class="feature__icon">{{template "icon-code"}}</span><h3>Workshop</h3><p class="feature__meta">60–90 minutes</p><p>Guide attendees through building something hands-on. We'll help with setup instructions and mentors.</p></div>
+        </div>
+    </div>
+</section>
+
+<section class="section section--tint" aria-labelledby="topics-heading">
+    <div class="container split">
+        <div>
+            <p class="eyebrow">Ideas</p>
+            <h2 class="section__title" id="topics-heading">What could I talk about?</h2>
+            <p>Anything that would interest a room of Go developers. Talks don't need to be advanced. Some of our most popular talks have been beginner-friendly introductions.</p>
+            <ul class="tags tags--large">
+                <li class="tag">Your first Go project</li><li class="tag">Concurrency</li><li class="tag">Testing &amp; fuzzing</li>
+                <li class="tag">Web services &amp; APIs</li><li class="tag">Generics</li><li class="tag">Performance &amp; profiling</li>
+                <li class="tag">Cloud &amp; Kubernetes</li><li class="tag">CLIs &amp; tooling</li><li class="tag">Go in production</li>
+                <li class="tag">Open source</li><li class="tag">Security</li><li class="tag">Career stories</li>
+            </ul>
+        </div>
+        <div class="panel">
+            <h3>What we'll do for you</h3>
+            <ul class="checklist">
+                <li>Help you shape your idea and abstract</li>
+                <li>Pair you with an organiser for a practice run</li>
+                <li>Provide a projector, mic and HDMI/USB-C adapters</li>
+                <li>Promote your talk on Meetup and social media</li>
+                <li>Record it (only if you're happy for us to)</li>
+                <li>Feed you pizza afterwards</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section class="section" aria-labelledby="process-heading">
+    <div class="container">
+        <div class="section__header">
+            <p class="eyebrow">How it works</p>
+            <h2 class="section__title" id="process-heading">From idea to stage in three steps</h2>
+        </div>
+        <ol class="steps">
+            <li class="step"><h3>Send us your idea</h3><p>A title and a couple of sentences is plenty. It doesn't need to be polished.</p></li>
+            <li class="step"><h3>We'll have a chat</h3><p>An organiser gets back to you within a week to talk it through and find a date.</p></li>
+            <li class="step"><h3>Give your talk</h3><p>We'll announce it, help you prepare and make sure everything works on the night.</p></li>
+        </ol>
+        <p class="center"><a href="{{.Site.SpeakerFormURL}}" class="button button--primary button--large" target="_blank" rel="noopener">Submit a talk idea {{template "icon-external"}}</a></p>
+    </div>
+</section>
+
+{{if .Speakers}}
+<section class="section section--tint" aria-labelledby="speakers-heading">
+    <div class="container">
+        <div class="section__header">
+            <p class="eyebrow">Past speakers</p>
+            <h2 class="section__title" id="speakers-heading">Thank you to everyone who has spoken</h2>
+        </div>
+        <div class="grid grid--2">
+            {{range .Speakers}}
+            <article class="person person--row card">
+                {{template "avatar" .}}
+                <div>
+                    <h3 class="person__name">{{.Name}}</h3>
+                    <p class="person__role">{{.Role}}{{if .Organisation}}, {{.Organisation}}{{end}}</p>
+                    {{if .Events}}<ul class="person__talks">{{range .Events}}<li><a href="/events/{{.Slug}}">{{.Title}}</a> <span class="muted">· {{date .StartTime "Jan 2006"}}</span></li>{{end}}</ul>{{end}}
+                    {{template "profile-links" .}}
+                </div>
+            </article>
+            {{end}}
+        </div>
+    </div>
+</section>
+{{end}}
+{{end}}

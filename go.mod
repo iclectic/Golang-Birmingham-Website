@@ -1,5 +1,5 @@
-module github.com/placeholder/golang-birmingham-website
+module github.com/iclectic/golang-birmingham-website
 
-go 1.21
+go 1.22
 
 require gopkg.in/yaml.v3 v3.0.1

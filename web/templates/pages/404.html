@@ -1,42 +1,14 @@
 {{define "content"}}
-<div class="error-page error-404">
-    <section class="error-content" aria-labelledby="error-title">
-        <div class="container">
-            <div class="error-visual">
-                <img src="/static/images/gopher/gopher-404.svg" alt="Go Gopher looking confused" loading="lazy">
-                <div class="error-code">404</div>
-            </div>
-            <div class="error-text">
-                <h1 id="error-title" class="error-title">Page Not Found</h1>
-                <p class="error-description">
-                    Oops! The page you're looking for seems to have wandered off. 
-                    Maybe it's attending a Go meetup somewhere else?
-                </p>
-                <p class="error-suggestion">
-                    Here are some places you might want to visit instead:
-                </p>
-                <div class="error-links">
-                    <a href="/" class="button button--primary">Home</a>
-                    <a href="/events" class="button button--secondary">Events</a>
-                    <a href="/about" class="button button--secondary">About</a>
-                    <a href="/contact" class="button button--outline">Contact Us</a>
-                </div>
-                <div class="error-code-block">
-                    <pre><code>package main
-
-import "fmt"
-
-func main() {
-    page := findPage("/not-found")
-    if page == nil {
-        fmt.Println("404: Page not found")
-        fmt.Println("Let's go home instead!")
-        navigateTo("/")
-    }
-}</code></pre>
-                </div>
-            </div>
+<section class="section error-page">
+    <div class="container error-page__inner">
+        <img src="{{asset "images/gopher.svg"}}" alt="" class="error-page__gopher" width="160" height="185">
+        <p class="eyebrow">Error 404</p>
+        <h1 class="page-hero__title">This page has wandered off</h1>
+        <p class="page-hero__lead">Like a goroutine without a WaitGroup, the page you're looking for didn't stick around.</p>
+        <div class="page-hero__actions page-hero__actions--center">
+            <a href="/" class="button button--primary">Go home</a>
+            <a href="/events" class="button button--secondary">See upcoming events</a>
         </div>
-    </section>
-</div>
+    </div>
+</section>
 {{end}}

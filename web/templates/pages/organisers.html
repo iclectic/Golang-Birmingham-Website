@@ -1,0 +1,37 @@
+{{define "content"}}
+<section class="page-hero">
+    <div class="container">
+        <p class="eyebrow">Organisers</p>
+        <h1 class="page-hero__title">The people behind the meetup</h1>
+        <p class="page-hero__lead">Golang Birmingham is organised by a small team of volunteers who love Go and want Birmingham to have a thriving, welcoming tech community.</p>
+    </div>
+</section>
+
+<section class="section" aria-label="Organising team">
+    <div class="container">
+        <div class="grid grid--3">
+            {{range .Team}}
+            <article class="card person">
+                {{template "avatar" .}}
+                <h2 class="person__name">{{.Name}}</h2>
+                <p class="person__role">{{.Role}}</p>
+                <p class="card__text">{{.Biography}}</p>
+                {{template "profile-links" .}}
+            </article>
+            {{end}}
+        </div>
+    </div>
+</section>
+
+<section class="section section--tight">
+    <div class="container">
+        <div class="cta-band">
+            <div>
+                <h2>Want to help organise?</h2>
+                <p>We're always happy to welcome new volunteers, whether you can help every month or just once in a while.</p>
+            </div>
+            <div class="cta-band__actions"><a href="mailto:{{.Site.ContactEmail}}?subject=Volunteering%20with%20Golang%20Birmingham" class="button button--light button--large">Get in touch</a></div>
+        </div>
+    </div>
+</section>
+{{end}}

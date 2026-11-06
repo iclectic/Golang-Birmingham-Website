@@ -1,0 +1,22 @@
+slug: "go-concurrency-patterns"
+title: "Advanced Concurrency Patterns in Go"
+summary: "Pipelines, fan-out/fan-in, errgroup and context cancellation: concurrency patterns that hold up in production."
+description: |
+  Goroutines and channels are easy to start and surprisingly easy to get wrong.
+
+  Mike shares the concurrency patterns that have survived years of production traffic at CloudScale, and the ones that didn't:
+  - Pipelines and bounded parallelism
+  - Fan-out/fan-in with errgroup
+  - Cancellation and deadlines with context
+  - Finding races and leaks before your users do
+
+  Pizza from 18:30, talk at 19:00, then drinks.
+start_time: "2026-10-15T18:30:00+01:00"
+end_time: "2026-10-15T20:30:00+01:00"
+venue_name: "Birmingham Innovation Centre"
+venue_address: "Newhall Street, Birmingham B3 1SB"
+topics: ["concurrency", "goroutines", "context"]
+speakers: ["mike-johnson"]
+registration_url: "https://www.meetup.com/golang-birmingham/"
+video_url: ""
+slides_url: ""

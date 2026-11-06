@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 232" role="img" aria-label="Go gopher">
+  <g stroke="#1d3b4a" stroke-width="4" stroke-linejoin="round">
+    <ellipse cx="62" cy="222" rx="18" ry="8" fill="#f6d2a2"/>
+    <ellipse cx="138" cy="222" rx="18" ry="8" fill="#f6d2a2"/>
+    <circle cx="48" cy="42" r="17" fill="#6ad7e5"/>
+    <circle cx="152" cy="42" r="17" fill="#6ad7e5"/>
+    <path d="M100 18c55 0 78 38 78 90v76c0 26-26 38-78 38s-78-12-78-38v-76c0-52 23-90 78-90z" fill="#6ad7e5"/>
+    <ellipse cx="22" cy="142" rx="10" ry="16" fill="#f6d2a2" transform="rotate(-18 22 142)"/>
+    <ellipse cx="178" cy="142" rx="10" ry="16" fill="#f6d2a2" transform="rotate(18 178 142)"/>
+    <circle cx="70" cy="80" r="25" fill="#fff"/>
+    <circle cx="130" cy="80" r="25" fill="#fff"/>
+    <ellipse cx="100" cy="120" rx="20" ry="14" fill="#f6d2a2"/>
+    <rect x="92" y="129" width="16" height="14" rx="3" fill="#fff"/>
+  </g>
+  <circle cx="44" cy="42" r="7" fill="#3fb4c9"/>
+  <circle cx="156" cy="42" r="7" fill="#3fb4c9"/>
+  <circle cx="77" cy="84" r="9" fill="#1d3b4a"/>
+  <circle cx="137" cy="84" r="9" fill="#1d3b4a"/>
+  <circle cx="80" cy="81" r="3" fill="#fff"/>
+  <circle cx="140" cy="81" r="3" fill="#fff"/>
+  <ellipse cx="100" cy="112" rx="10" ry="7" fill="#1d3b4a"/>
+  <path d="M100 129v14" stroke="#1d3b4a" stroke-width="2"/>
+</svg>

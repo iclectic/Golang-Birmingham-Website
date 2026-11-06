@@ -1,0 +1,71 @@
+{{define "content"}}
+<section class="page-hero">
+    <div class="container">
+        <p class="eyebrow">Sponsors</p>
+        <h1 class="page-hero__title">Keeping Golang Birmingham free for everyone</h1>
+        <p class="page-hero__lead">Golang Birmingham is run by volunteers and every meetup is free to attend, with food and drinks provided. That's only possible thanks to the organisations below. Thank you!</p>
+        <div class="page-hero__actions">
+            <a href="mailto:{{.Site.ContactEmail}}?subject=Sponsoring%20Golang%20Birmingham" class="button button--primary">Become a sponsor</a>
+        </div>
+    </div>
+</section>
+
+<section class="section" aria-labelledby="current-heading">
+    <div class="container">
+        <h2 class="visually-hidden" id="current-heading">Current sponsors</h2>
+        {{range .SponsorGroups}}
+        <div class="sponsor-group">
+            <h3 class="sponsor-group__title">{{.Category}}s</h3>
+            <div class="grid grid--2">
+                {{range .Sponsors}}
+                <article class="card sponsor">
+                    <div class="sponsor__logo">{{if .Logo}}<img src="{{.Logo}}" alt="{{.Name}} logo" loading="lazy">{{else}}<span>{{initials .Name}}</span>{{end}}</div>
+                    <div>
+                        <h4 class="card__title">{{if .WebsiteURL}}<a href="{{.WebsiteURL}}" target="_blank" rel="noopener">{{.Name}}</a>{{else}}{{.Name}}{{end}}</h4>
+                        <p class="card__text">{{.Description}}</p>
+                    </div>
+                </article>
+                {{end}}
+            </div>
+        </div>
+        {{else}}
+        <div class="empty"><h3>Be our first sponsor</h3><p>We're looking for partners to help us grow the Go community in Birmingham.</p></div>
+        {{end}}
+    </div>
+</section>
+
+<section class="section section--tint" aria-labelledby="ways-heading">
+    <div class="container">
+        <div class="section__header">
+            <p class="eyebrow">Get involved</p>
+            <h2 class="section__title" id="ways-heading">Ways to support the community</h2>
+            <p class="section__lead">Every bit helps, and we're happy to tailor something that works for you.</p>
+        </div>
+        <div class="grid grid--4">
+            <div class="feature"><span class="feature__icon">{{template "icon-building"}}</span><h3>Host a meetup</h3><p>Space for 40–80 people, a screen or projector and wifi. City-centre venues near New Street, Snow Hill or Moor Street are ideal.</p></div>
+            <div class="feature"><span class="feature__icon">{{template "icon-pizza"}}</span><h3>Food &amp; drink</h3><p>Cover pizza and soft drinks for an evening and get a shout-out from the stage and on Meetup.</p></div>
+            <div class="feature"><span class="feature__icon">{{template "icon-video"}}</span><h3>Recording</h3><p>Help us record and publish talks so the whole Go community can learn from Birmingham's speakers.</p></div>
+            <div class="feature"><span class="feature__icon">{{template "icon-train"}}</span><h3>Speaker travel</h3><p>Help us bring great speakers from further afield by covering train fares and accommodation.</p></div>
+        </div>
+    </div>
+</section>
+
+<section class="section" aria-labelledby="why-heading">
+    <div class="container split">
+        <div>
+            <p class="eyebrow">Why sponsor</p>
+            <h2 class="section__title" id="why-heading">Meet Go engineers in the Midlands</h2>
+            <p>Our members are software engineers, SREs, platform teams, students and career-changers from across Birmingham and the West Midlands. Sponsoring is a friendly, genuine way to support them.</p>
+        </div>
+        <div class="panel">
+            <ul class="checklist">
+                <li>A short slot to introduce your team and say if you're hiring</li>
+                <li>Your logo on this site and on our Meetup events</li>
+                <li>Thanks from the stage and on social media</li>
+                <li>A visible commitment to the local open-source community</li>
+            </ul>
+            <a href="mailto:{{.Site.ContactEmail}}?subject=Sponsoring%20Golang%20Birmingham" class="button button--primary">Talk to us about sponsoring</a>
+        </div>
+    </div>
+</section>
+{{end}}

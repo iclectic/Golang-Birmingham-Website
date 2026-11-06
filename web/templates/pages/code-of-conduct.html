@@ -1,267 +1,83 @@
 {{define "content"}}
-<div class="code-of-conduct-page">
-    <section class="page-header" aria-labelledby="coc-title">
-        <div class="container">
-            <h1 id="coc-title" class="page-title">Code of Conduct</h1>
-            <p class="page-description">
-                Our guidelines for creating a safe, inclusive, and welcoming environment for all community members.
-            </p>
-        </div>
-    </section>
+<section class="page-hero">
+    <div class="container">
+        <p class="eyebrow">Code of Conduct</p>
+        <h1 class="page-hero__title">A friendly, safe and welcoming community</h1>
+        <p class="page-hero__lead">Golang Birmingham is for everyone. This code of conduct applies to all our events and online spaces, and to everyone who takes part: attendees, speakers, sponsors, volunteers and organisers.</p>
+    </div>
+</section>
 
-    <!-- Introduction -->
-    <section class="coc-introduction" aria-labelledby="intro-heading">
-        <div class="container">
-            <h2 id="intro-heading" class="section-title">Our Commitment</h2>
-            <div class="intro-content">
-                <p>
-                    Golang Birmingham is dedicated to providing a harassment-free experience for everyone, 
-                    regardless of gender, gender identity and expression, sexual orientation, disability, 
-                    physical appearance, body size, race, ethnicity, age, religion, or technology choices.
-                </p>
-                <p>
-                    We do not tolerate harassment of participants in any form. Sexual language and imagery 
-                    is not appropriate for any venue, including talks, workshops, social media, or other 
-                    community platforms.
-                </p>
-                <p>
-                    This code of conduct applies to all spaces managed by Golang Birmingham, including 
-                    our meetups, workshops, online communities, and social media channels. 
-                    We expect all community members to follow these guidelines in all community interactions.
-                </p>
+<section class="section">
+    <div class="container doc">
+        <nav class="doc__toc" aria-label="On this page">
+            <p class="doc__toc-title">On this page</p>
+            <ol>
+                <li><a href="#short-version">The short version</a></li>
+                <li><a href="#expected">Expected behaviour</a></li>
+                <li><a href="#unacceptable">Unacceptable behaviour</a></li>
+                <li><a href="#reporting">Reporting a problem</a></li>
+                <li><a href="#enforcement">Enforcement</a></li>
+                <li><a href="#scope">Scope</a></li>
+                <li><a href="#attribution">Attribution</a></li>
+            </ol>
+        </nav>
+
+        <article class="prose doc__body">
+            <div class="callout">
+                <strong>Need help right now?</strong> Speak to any organiser at the event, or email
+                <a href="mailto:{{.Site.ConductEmail}}">{{.Site.ConductEmail}}</a>. If you or anyone else is in danger, call 999.
             </div>
-        </div>
-    </section>
 
-    <!-- Expected Behavior -->
-    <section class="expected-behavior" aria-labelledby="expected-heading">
-        <div class="container">
-            <h2 id="expected-heading" class="section-title">Expected Behavior</h2>
-            <div class="behavior-list">
-                <div class="behavior-item">
-                    <h3>Be Respectful</h3>
-                    <p>
-                        Treat all community members with respect and consideration. Value different viewpoints 
-                        and experiences. Be respectful when providing feedback and when receiving feedback.
-                    </p>
-                </div>
-                <div class="behavior-item">
-                    <h3>Be Inclusive</h3>
-                    <p>
-                        Create an inclusive environment where everyone feels welcome. Use inclusive language 
-                        and be mindful of cultural differences. Make space for others to participate.
-                    </p>
-                </div>
-                <div class="behavior-item">
-                    <h3>Be Collaborative</h3>
-                    <p>
-                        Work together to build a strong community. Share knowledge freely and help others learn. 
-                        Focus on what is best for the community as a whole.
-                    </p>
-                </div>
-                <div class="behavior-item">
-                    <h3>Be Professional</h3>
-                    <p>
-                        Maintain professional conduct in all interactions. Be mindful of your language and behavior. 
-                        Remember that you represent both yourself and the Golang Birmingham community.
-                    </p>
-                </div>
-                <div class="behavior-item">
-                    <h3>Be Constructive</h3>
-                    <p>
-                        Provide constructive feedback and criticism. Focus on ideas and code rather than individuals. 
-                        Help others improve and learn from your experiences.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
+            <h2 id="short-version">The short version</h2>
+            <p>We are committed to providing a harassment-free experience for everyone, regardless of age, body size, disability, ethnicity, sex characteristics, gender identity and expression, level of experience, education, socio-economic status, nationality, personal appearance, race, religion, or sexual identity and orientation.</p>
+            <p>Be kind, be patient and assume good intent. Harassment of any kind will not be tolerated.</p>
 
-    <!-- Unacceptable Behavior -->
-    <section class="unacceptable-behavior" aria-labelledby="unacceptable-heading">
-        <div class="container">
-            <h2 id="unacceptable-heading" class="section-title">Unacceptable Behavior</h2>
-            <div class="unacceptable-list">
-                <div class="unacceptable-item">
-                    <h3>Harassment</h3>
-                    <p>
-                        Any form of harassment, including but not limited to: offensive comments, verbal threats, 
-                        intimidation, stalking, photography or recording without consent, sustained disruption 
-                        of talks or events, and unwelcome physical contact.
-                    </p>
-                </div>
-                <div class="unacceptable-item">
-                    <h3>Discrimination</h3>
-                    <p>
-                        Discriminatory jokes, language, or actions based on gender, gender identity, sexual orientation, 
-                        disability, physical appearance, body size, race, ethnicity, age, religion, or technology choices.
-                    </p>
-                </div>
-                <div class="unacceptable-item">
-                    <h3>Inappropriate Content</h3>
-                    <p>
-                        Sharing or displaying sexually explicit or violent content, unwelcome sexual attention, 
-                        or any content that makes others uncomfortable.
-                    </p>
-                </div>
-                <div class="unacceptable-item">
-                    <h3>Disruptive Behavior</h3>
-                    <p>
-                        Continuing to initiate interaction with someone after being asked to stop, disrupting events 
-                        or presentations, or otherwise interfering with the ability of others to participate.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
+            <h2 id="expected">Expected behaviour</h2>
+            <ul>
+                <li><strong>Be welcoming.</strong> Make space for newcomers and people with different levels of experience. There are no stupid questions.</li>
+                <li><strong>Be respectful.</strong> Disagree with ideas, not people. Respect that others may have different views and backgrounds.</li>
+                <li><strong>Be considerate.</strong> Think about how your words and actions affect others, including people who aren't in the room.</li>
+                <li><strong>Be collaborative.</strong> Share knowledge generously and give credit where it's due.</li>
+                <li><strong>Look out for each other.</strong> If you notice someone in distress or being made uncomfortable, check in with them or let an organiser know.</li>
+            </ul>
 
-    <!-- Event Conduct -->
-    <section class="event-conduct" aria-labelledby="event-heading">
-        <div class="container">
-            <h2 id="event-heading" class="section-title">Event-Specific Guidelines</h2>
-            <div class="event-guidelines">
-                <div class="guideline-section">
-                    <h3>During Talks and Presentations</h3>
-                    <ul>
-                        <li>Listen attentively and respect the speaker</li>
-                        <li>Save questions for the designated Q&A session</li>
-                        <li>Avoid side conversations during presentations</li>
-                        <li>Be mindful of recording devices and photography policies</li>
-                        <li>Respect time limits during Q&A sessions</li>
-                    </ul>
-                </div>
-                <div class="guideline-section">
-                    <h3>During Networking and Social Events</h3>
-                    <ul>
-                        <li>Respect personal space and boundaries</li>
-                        <li>Ask before taking photos of others</li>
-                        <li>Be inclusive in conversations and group activities</li>
-                        <li>Remember that professional boundaries still apply</li>
-                        <li>Look out for others who may seem uncomfortable or isolated</li>
-                    </ul>
-                </div>
-                <div class="guideline-section">
-                    <h3>Online and Social Media</h3>
-                    <ul>
-                        <li>Be respectful in all online interactions</li>
-                        <li>Don't share private information without consent</li>
-                        <li>Report inappropriate content to organizers</li>
-                        <li>Remember that community guidelines apply online too</li>
-                        <li>Think before you post - once online, always online</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+            <h2 id="unacceptable">Unacceptable behaviour</h2>
+            <ul>
+                <li>Offensive comments related to any of the characteristics listed above</li>
+                <li>Sexual language or imagery, and unwelcome sexual attention or physical contact</li>
+                <li>Deliberate intimidation, stalking or following</li>
+                <li>Photographing or recording someone who has asked not to be</li>
+                <li>Sustained disruption of talks or other events</li>
+                <li>Publishing others' private information without their explicit permission</li>
+                <li>Advocating for, or encouraging, any of the above</li>
+            </ul>
+            <p>Speakers and sponsors are held to the same standard. Talks, slides and stands should be suitable for a professional, mixed audience.</p>
 
-    <!-- Reporting Guidelines -->
-    <section class="reporting" aria-labelledby="reporting-heading">
-        <div class="container">
-            <h2 id="reporting-heading" class="section-title">Reporting Concerns</h2>
-            <div class="reporting-content">
-                <p>
-                    If you experience or witness behavior that violates this code of conduct, 
-                    please report it to the event organizers or community moderators. 
-                    All reports will be handled confidentially and investigated promptly.
-                </p>
-                
-                <div class="reporting-methods">
-                    <div class="reporting-method">
-                        <h3>Email</h3>
-                        <p>
-                            Send an email to <strong>{{.Site.ContactEmail}}</strong> with the subject "Code of Conduct Report". 
-                            Please include as much detail as possible about the incident.
-                        </p>
-                    </div>
-                    <div class="reporting-method">
-                        <h3>In Person</h3>
-                        <p>
-                            Speak with any of the event organizers, who will be wearing identifying badges or shirts. 
-                            You can ask to speak with them privately.
-                        </p>
-                    </div>
-                    <div class="reporting-method">
-                        <h3>Anonymous Reporting</h3>
-                        <p>
-                            If you prefer to report anonymously, you can use our anonymous reporting form 
-                            or leave a note with any organizer.
-                        </p>
-                    </div>
-                </div>
+            <h2 id="reporting">Reporting a problem</h2>
+            <p>If you experience or witness unacceptable behaviour, or have any other concerns, please tell us as soon as possible. You can:</p>
+            <ul>
+                <li>Speak to any organiser in person at the event</li>
+                <li>Email <a href="mailto:{{.Site.ConductEmail}}">{{.Site.ConductEmail}}</a>, which is only seen by the organising team</li>
+                <li>Message an organiser privately on <a href="{{.Site.MeetupURL}}" target="_blank" rel="noopener">Meetup</a></li>
+            </ul>
+            <p>Helpful details include what happened, when and where, who was involved and whether there were any witnesses, but please report even if you don't have all of these. All reports are handled in confidence. If a report involves an organiser, they will not be involved in handling it.</p>
 
-                <div class="reporting-info">
-                    <h3>What to Include in Your Report</h3>
-                    <ul>
-                        <li>Your contact information (optional, for follow-up)</li>
-                        <li>Date, time, and location of the incident</li>
-                        <li>Description of the behavior or incident</li>
-                        <li>Names of individuals involved (if known)</li>
-                        <li>Any witnesses to the incident</li>
-                        <li>Any evidence or supporting documentation</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+            <h2 id="enforcement">Enforcement</h2>
+            <p>Organisers will review every report promptly and fairly. Anyone asked to stop unacceptable behaviour is expected to comply immediately. Depending on the situation, we may:</p>
+            <ul>
+                <li>Have a private conversation and issue a warning</li>
+                <li>Ask the person to leave the event, without a refund (our events are free anyway)</li>
+                <li>Remove the person from the Meetup group and ban them from future events</li>
+                <li>Involve venue security or the police where appropriate</li>
+            </ul>
+            <p>We will follow up with the person who made the report to let them know how it was handled, where appropriate.</p>
 
-    <!-- Enforcement -->
-    <section class="enforcement" aria-labelledby="enforcement-heading">
-        <div class="container">
-            <h2 id="enforcement-heading" class="section-title">Enforcement</h2>
-            <div class="enforcement-content">
-                <p>
-                    Community organizers and moderators are responsible for enforcing this code of conduct. 
-                    They have the right and responsibility to take appropriate action in response to any 
-                    behavior that they deem inappropriate, threatening, offensive, or harmful.
-                </p>
-                
-                <div class="enforcement-actions">
-                    <h3>Possible Actions</h3>
-                    <ul>
-                        <li>A private warning or conversation about the behavior</li>
-                        <li>A request for a public or private apology</li>
-                        <li>Temporary removal from the event or community space</li>
-                        <li>Permanent ban from future events and community spaces</li>
-                        <li>Involvement of law enforcement if necessary</li>
-                    </ul>
-                </div>
+            <h2 id="scope">Scope</h2>
+            <p>This code applies at our meetups, workshops and socials (including at venues and the pub afterwards), and in our online spaces such as Meetup, social media and chat groups. It also applies when someone is representing Golang Birmingham elsewhere.</p>
 
-                <div class="enforcement-principles">
-                    <h3>Our Approach</h3>
-                    <ul>
-                        <li>We will respond to all reports promptly and thoroughly</li>
-                        <li>We will respect privacy and confidentiality when handling reports</li>
-                        <li>We will provide support to those who experience harassment</li>
-                        <li>We will follow due process and consider all perspectives</li>
-                        <li>We will document all incidents and actions taken</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Information -->
-    <section class="contact-info" aria-labelledby="contact-heading">
-        <div class="container">
-            <h2 id="contact-heading" class="section-title">Contact Information</h2>
-            <div class="contact-content">
-                <p>
-                    If you have questions about this code of conduct or need to report a concern, 
-                    please don't hesitate to reach out to us.
-                </p>
-                <div class="contact-details">
-                    <p>
-                        <strong>Email:</strong> {{.Site.ContactEmail}}<br>
-                        <strong>Response Time:</strong> We aim to respond to all reports within 24 hours<br>
-                        <strong>Confidentiality:</strong> All reports will be handled with the utmost confidentiality
-                    </p>
-                </div>
-                <p>
-                    This code of conduct was adapted from the <a href="https://www.contributor-covenant.org" target="_blank" rel="noopener noreferrer">Contributor Covenant</a> 
-                    and is licensed under a <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Creative Commons Attribution 4.0 International License</a>.
-                </p>
-            </div>
-        </div>
-    </section>
-</div>
+            <h2 id="attribution">Attribution</h2>
+            <p>This code of conduct is adapted from the <a href="https://go.dev/conduct" target="_blank" rel="noopener">Go Community Code of Conduct</a> and the <a href="https://www.contributor-covenant.org/" target="_blank" rel="noopener">Contributor Covenant</a>.</p>
+        </article>
+    </div>
+</section>
 {{end}}

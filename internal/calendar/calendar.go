@@ -1,99 +1,94 @@
+// Package calendar generates iCalendar (RFC 5545) files for events.
 package calendar
 
 import (
 	"fmt"
-	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
-	"github.com/placeholder/golang-birmingham-website/internal/domain"
+	"github.com/iclectic/golang-birmingham-website/internal/domain"
 )
 
-func GenerateICS(event *domain.Event, baseURL string) ([]byte, error) {
-	var builder strings.Builder
-	
-	// ICS file header
-	builder.WriteString("BEGIN:VCALENDAR\r\n")
-	builder.WriteString("VERSION:2.0\r\n")
-	builder.WriteString("PRODID:-//Golang Birmingham//Community Events//EN\r\n")
-	builder.WriteString("CALSCALE:GREGORIAN\r\n")
-	builder.WriteString("METHOD:PUBLISH\r\n")
-	
-	// Event details
-	builder.WriteString("BEGIN:VEVENT\r\n")
-	builder.WriteString(fmt.Sprintf("UID:%s@golangbirmingham.com\r\n", event.ID))
-	builder.WriteString(fmt.Sprintf("DTSTART:%s\r\n", event.StartTime.UTC().Format("20060102T150405Z")))
-	builder.WriteString(fmt.Sprintf("DTEND:%s\r\n", event.EndTime.UTC().Format("20060102T150405Z")))
-	builder.WriteString(fmt.Sprintf("DTSTAMP:%s\r\n", time.Now().UTC().Format("20060102T150405Z")))
-	
-	// Title
-	escapedTitle := escapeICSString(event.Title)
-	builder.WriteString(fmt.Sprintf("SUMMARY:%s\r\n", escapedTitle))
-	
-	// Description
-	description := fmt.Sprintf("%s\n\n%s", event.Summary, event.Description)
+const icsTime = "20060102T150405Z"
+
+// GenerateICS renders a single-event VCALENDAR document.
+func GenerateICS(event domain.Event, baseURL string, now time.Time) []byte {
+	host := "golang-birmingham"
+	if u, err := url.Parse(baseURL); err == nil && u.Hostname() != "" {
+		host = u.Hostname()
+	}
+
+	description := event.Summary
 	if len(event.Speakers) > 0 {
 		description += "\n\nSpeakers:"
-		for _, speaker := range event.Speakers {
-			description += fmt.Sprintf("\n- %s", speaker.Name)
-			if speaker.Role != "" {
-				description += fmt.Sprintf(" (%s)", speaker.Role)
+		for _, s := range event.Speakers {
+			description += "\n- " + s.Name
+			if s.Role != "" {
+				description += " (" + s.Role + ")"
 			}
-			if speaker.Organisation != "" {
-				description += fmt.Sprintf(", %s", speaker.Organisation)
+			if s.Organisation != "" {
+				description += ", " + s.Organisation
 			}
 		}
 	}
-	escapedDescription := escapeICSString(description)
-	builder.WriteString(fmt.Sprintf("DESCRIPTION:%s\r\n", escapedDescription))
-	
-	// Location
-	location := fmt.Sprintf("%s, %s", event.VenueName, event.VenueAddress)
-	escapedLocation := escapeICSString(location)
-	builder.WriteString(fmt.Sprintf("LOCATION:%s\r\n", escapedLocation))
-	
-	// URL
-	eventURL := fmt.Sprintf("%s/events/%s", baseURL, event.Slug)
-	builder.WriteString(fmt.Sprintf("URL:%s\r\n", eventURL))
-	
-	// Status
-	builder.WriteString("STATUS:CONFIRMED\r\n")
-	
-	// End event
-	builder.WriteString("END:VEVENT\r\n")
-	
-	// End calendar
-	builder.WriteString("END:VCALENDAR\r\n")
-	
-	return []byte(builder.String()), nil
+	eventURL := baseURL + "/events/" + event.Slug
+	description += "\n\n" + eventURL
+
+	location := event.VenueName
+	if event.VenueAddress != "" {
+		location += ", " + event.VenueAddress
+	}
+
+	var b strings.Builder
+	line := func(name, value string) { b.WriteString(fold(name + ":" + value)) }
+
+	line("BEGIN", "VCALENDAR")
+	line("VERSION", "2.0")
+	line("PRODID", "-//Golang Birmingham//Events//EN")
+	line("CALSCALE", "GREGORIAN")
+	line("METHOD", "PUBLISH")
+	line("BEGIN", "VEVENT")
+	line("UID", fmt.Sprintf("%s@%s", event.ID, host))
+	line("DTSTAMP", now.UTC().Format(icsTime))
+	line("DTSTART", event.StartTime.UTC().Format(icsTime))
+	line("DTEND", event.EndTime.UTC().Format(icsTime))
+	line("SUMMARY", EscapeICSString(event.Title))
+	line("DESCRIPTION", EscapeICSString(description))
+	line("LOCATION", EscapeICSString(location))
+	line("URL", eventURL)
+	line("STATUS", "CONFIRMED")
+	line("END", "VEVENT")
+	line("END", "VCALENDAR")
+	return []byte(b.String())
 }
 
-func ServeICS(w http.ResponseWriter, event *domain.Event, baseURL string) {
-	icsData, err := GenerateICS(event, baseURL)
-	if err != nil {
-		http.Error(w, "Failed to generate calendar file", http.StatusInternalServerError)
-		return
-	}
-	
-	// Set headers for ICS file download
-	w.Header().Set("Content-Type", "text/calendar; charset=utf-8")
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.ics\"", event.Slug))
-	
-	w.Write(icsData)
+// EscapeICSString escapes text values per RFC 5545 section 3.3.11.
+func EscapeICSString(s string) string {
+	return strings.NewReplacer(
+		`\`, `\\`,
+		`,`, `\,`,
+		`;`, `\;`,
+		"\r\n", `\n`,
+		"\n", `\n`,
+		"\r", "",
+	).Replace(s)
 }
 
-func escapeICSString(s string) string {
-	// Escape special characters for ICS format
-	s = strings.ReplaceAll(s, "\\", "\\\\")
-	s = strings.ReplaceAll(s, ",", "\\,")
-	s = strings.ReplaceAll(s, ";", "\\;")
-	s = strings.ReplaceAll(s, "\n", "\\n")
-	
-	// Wrap in quotes if contains spaces or special chars
-	if strings.ContainsAny(s, " :") {
-		s = strings.ReplaceAll(s, "\r", "")
-		s = strings.ReplaceAll(s, "\n", "\\n")
+// fold splits a content line into 75-octet chunks, as RFC 5545 requires.
+func fold(line string) string {
+	const limit = 75
+	var b strings.Builder
+	n := 0
+	for _, r := range line {
+		size := len(string(r))
+		if n+size > limit {
+			b.WriteString("\r\n ")
+			n = 1
+		}
+		b.WriteRune(r)
+		n += size
 	}
-	
-	return s
+	b.WriteString("\r\n")
+	return b.String()
 }
