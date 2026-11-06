@@ -19,5 +19,5 @@ venue_address: "Colmore Row, Birmingham B3 2BJ"
 topics: ["testing", "fuzzing", "ci"]
 speakers: ["alex-rodriguez"]
 registration_url: "https://www.meetup.com/golang-birmingham/"
-video_url: "https://www.youtube.com/@golangbirmingham"
+video_url: ""
 slides_url: ""

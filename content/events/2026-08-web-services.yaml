@@ -19,5 +19,5 @@ venue_address: "Innovation Birmingham Campus, Holt Street, Birmingham B7 4BP"
 topics: ["net/http", "apis", "databases"]
 speakers: ["emma-wilson"]
 registration_url: "https://www.meetup.com/golang-birmingham/"
-video_url: "https://www.youtube.com/@golangbirmingham"
+video_url: ""
 slides_url: ""

@@ -60,7 +60,7 @@ func TestPages(t *testing.T) {
 		{"/", 200, []string{"Where Birmingham builds with", "Next meetup", "Building Microservices with Go", "Join us on Meetup", `id="contact"`}},
 		{"/events", 200, []string{"Upcoming", "New Year Lightning Talks", "Past events", "Advanced Concurrency Patterns in Go"}},
 		{"/events/go-microservices-workshop", 200, []string{"Upcoming event", "RSVP on Meetup", "Sarah Chen", "/events/go-microservices-workshop/calendar.ics", `"@type":"Event"`, "<li>Packaging and deploying with containers</li>"}},
-		{"/events/go-concurrency-patterns", 200, []string{"Past event", "Watch the recording"}},
+		{"/events/go-concurrency-patterns", 200, []string{"Past event", "Mike Johnson"}},
 		{"/speaking", 200, []string{"Speak at Golang Birmingham", "Lightning talk", "Mike Johnson"}},
 		{"/sponsors", 200, []string{"Venue Partners", "Birmingham Tech Hub", "Become a sponsor"}},
 		{"/organisers", 200, []string{"Ibim Braide"}},
