@@ -1,99 +1,94 @@
+// Package domain defines the content types rendered by the website.
 package domain
 
-import (
-	"time"
-)
+import "time"
 
+// Event is a single meetup, workshop or social.
 type Event struct {
-	ID              string    `json:"id"`
-	Slug            string    `json:"slug"`
-	Title           string    `json:"title"`
-	Summary         string    `json:"summary"`
-	Description     string    `json:"description"`
-	StartTime       time.Time `json:"start_time"`
-	EndTime         time.Time `json:"end_time"`
-	VenueName       string    `json:"venue_name"`
-	VenueAddress    string    `json:"venue_address"`
-	Image           string    `json:"image"`
-	Topics          []string  `json:"topics"`
-	Speakers        []Speaker `json:"speakers"`
-	RegistrationURL string    `json:"registration_url"`
-	VideoURL        string    `json:"video_url"`
-	SlidesURL       string    `json:"slides_url"`
-	Featured        bool      `json:"featured"`
+	ID              string    `yaml:"id"`
+	Slug            string    `yaml:"slug"`
+	Title           string    `yaml:"title"`
+	Summary         string    `yaml:"summary"`
+	Description     string    `yaml:"description"`
+	StartTime       time.Time `yaml:"start_time"`
+	EndTime         time.Time `yaml:"end_time"`
+	VenueName       string    `yaml:"venue_name"`
+	VenueAddress    string    `yaml:"venue_address"`
+	Topics          []string  `yaml:"topics"`
+	SpeakerSlugs    []string  `yaml:"speakers"`
+	RegistrationURL string    `yaml:"registration_url"`
+	VideoURL        string    `yaml:"video_url"`
+	SlidesURL       string    `yaml:"slides_url"`
+
+	// Speakers is resolved from SpeakerSlugs when content is loaded.
+	Speakers []Speaker `yaml:"-"`
 }
 
+// IsPast reports whether the event has finished at the given time.
+func (e Event) IsPast(now time.Time) bool {
+	return !e.EndTime.After(now)
+}
+
+// Speaker is someone who has presented at an event.
 type Speaker struct {
-	ID           string `json:"id"`
-	Slug         string `json:"slug"`
-	Name         string `json:"name"`
-	Role         string `json:"role"`
-	Organisation string `json:"organisation"`
-	Biography    string `json:"biography"`
-	Image        string `json:"image"`
-	LinkedInURL  string `json:"linkedin_url"`
-	GitHubURL    string `json:"github_url"`
-	WebsiteURL   string `json:"website_url"`
+	Slug         string `yaml:"slug"`
+	Name         string `yaml:"name"`
+	Role         string `yaml:"role"`
+	Organisation string `yaml:"organisation"`
+	Biography    string `yaml:"biography"`
+	Image        string `yaml:"image"`
+	LinkedInURL  string `yaml:"linkedin_url"`
+	GitHubURL    string `yaml:"github_url"`
+	WebsiteURL   string `yaml:"website_url"`
 }
 
+// TeamMember is an organiser or volunteer.
 type TeamMember struct {
-	Name        string `json:"name"`
-	Role        string `json:"role"`
-	Biography   string `json:"biography"`
-	Image       string `json:"image"`
-	LinkedInURL string `json:"linkedin_url"`
-	GitHubURL   string `json:"github_url"`
-	WebsiteURL  string `json:"website_url"`
+	Name        string `yaml:"name"`
+	Role        string `yaml:"role"`
+	Biography   string `yaml:"biography"`
+	Image       string `yaml:"image"`
+	LinkedInURL string `yaml:"linkedin_url"`
+	GitHubURL   string `yaml:"github_url"`
+	WebsiteURL  string `yaml:"website_url"`
 }
 
+// Sponsor is an organisation supporting the meetup.
 type Sponsor struct {
-	Name        string `json:"name"`
-	Category    string `json:"category"`
-	Logo        string `json:"logo"`
-	WebsiteURL  string `json:"website_url"`
-	Description string `json:"description"`
+	Name        string `yaml:"name"`
+	Category    string `yaml:"category"`
+	Logo        string `yaml:"logo"`
+	WebsiteURL  string `yaml:"website_url"`
+	Description string `yaml:"description"`
 }
 
-type GalleryItem struct {
-	ID        string `json:"id"`
-	EventSlug string `json:"event_slug"`
-	Year      int    `json:"year"`
-	Category  string `json:"category"`
-	Image     string `json:"image"`
-	Thumbnail string `json:"thumbnail"`
-	Caption   string `json:"caption"`
-	AltText   string `json:"alt_text"`
+// SponsorGroup is a set of sponsors sharing a category.
+type SponsorGroup struct {
+	Category string
+	Sponsors []Sponsor
 }
 
-type ContactForm struct {
-	Name        string `json:"name"`
-	Email       string `json:"email"`
-	EnquiryType string `json:"enquiry_type"`
-	Subject     string `json:"subject"`
-	Message     string `json:"message"`
-}
-
+// SiteStats are headline numbers shown on the home page.
 type SiteStats struct {
-	Members   int `json:"members"`
-	Events    int `json:"events"`
-	Speakers  int `json:"speakers"`
-	Talks     int `json:"talks"`
+	Members  int `json:"members"`
+	Events   int `json:"events"`
+	Speakers int `json:"speakers"`
 }
 
+// SiteConfig holds site-wide settings and links.
 type SiteConfig struct {
-	Title             string   `json:"title"`
-	Description       string   `json:"description"`
-	BaseURL           string   `json:"base_url"`
-	MeetupURL         string   `json:"meetup_url"`
-	LinkedInURL       string   `json:"linkedin_url"`
-	YouTubeURL        string   `json:"youtube_url"`
-	GitHubURL         string   `json:"github_url"`
-	SpeakerFormURL    string   `json:"speaker_form_url"`
-	ContactEmail      string   `json:"contact_email"`
-	Stats             SiteStats `json:"stats"`
-	SocialLinks       []SocialLink `json:"social_links"`
+	Title          string       `json:"title"`
+	Tagline        string       `json:"tagline"`
+	Description    string       `json:"description"`
+	MeetupURL      string       `json:"meetup_url"`
+	SpeakerFormURL string       `json:"speaker_form_url"`
+	ContactEmail   string       `json:"contact_email"`
+	ConductEmail   string       `json:"conduct_email"`
+	Stats          SiteStats    `json:"stats"`
+	SocialLinks    []SocialLink `json:"social_links"`
 }
 
+// SocialLink is an external community profile.
 type SocialLink struct {
 	Name string `json:"name"`
 	URL  string `json:"url"`

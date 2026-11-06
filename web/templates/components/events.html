@@ -1,0 +1,63 @@
+{{define "speaker-names"}}{{range $i, $s := .}}{{if $i}}, {{end}}{{$s.Name}}{{end}}{{end}}
+
+{{define "event-meta"}}
+<ul class="meta">
+    <li>{{template "icon-calendar"}}<time datetime="{{iso .StartTime}}">{{date .StartTime "Monday 2 January 2006"}}</time></li>
+    <li>{{template "icon-clock"}}{{date .StartTime "15:04"}}–{{date .EndTime "15:04"}}</li>
+    <li>{{template "icon-pin"}}{{.VenueName}}</li>
+    {{if .Speakers}}<li>{{template "icon-mic"}}{{template "speaker-names" .Speakers}}</li>{{end}}
+</ul>
+{{end}}
+
+{{define "date-badge"}}
+<div class="date-badge" aria-hidden="true">
+    <span class="date-badge__month">{{date .StartTime "Jan"}}</span>
+    <span class="date-badge__day">{{date .StartTime "2"}}</span>
+</div>
+{{end}}
+
+{{define "upcoming-card"}}
+<article class="event-row">
+    {{template "date-badge" .}}
+    <div class="event-row__body">
+        <h3 class="event-row__title"><a href="/events/{{.Slug}}">{{.Title}}</a></h3>
+        {{template "event-meta" .}}
+        <p>{{.Summary}}</p>
+        {{if .Topics}}<ul class="tags">{{range .Topics}}<li class="tag">{{.}}</li>{{end}}</ul>{{end}}
+    </div>
+    <div class="event-row__actions">
+        {{if .RegistrationURL}}<a href="{{.RegistrationURL}}" class="button button--primary" target="_blank" rel="noopener">RSVP on Meetup {{template "icon-external"}}</a>{{end}}
+        <a href="/events/{{.Slug}}" class="button button--secondary">Event details</a>
+        <a href="/events/{{.Slug}}/calendar.ics" class="text-link">{{template "icon-calendar"}} Add to calendar</a>
+    </div>
+</article>
+{{end}}
+
+{{define "past-card"}}
+<article class="card card--event">
+    <p class="card__eyebrow"><time datetime="{{iso .StartTime}}">{{date .StartTime "2 January 2006"}}</time></p>
+    <h3 class="card__title"><a href="/events/{{.Slug}}" class="card__link">{{.Title}}</a></h3>
+    {{if .Speakers}}<p class="card__byline">{{template "speaker-names" .Speakers}}</p>{{end}}
+    <p class="card__text">{{.Summary}}</p>
+    {{if or .VideoURL .SlidesURL}}
+    <ul class="card__badges">
+        {{if .VideoURL}}<li class="badge badge--video">{{template "icon-play"}} Recording</li>{{end}}
+        {{if .SlidesURL}}<li class="badge">{{template "icon-slides"}} Slides</li>{{end}}
+    </ul>
+    {{end}}
+</article>
+{{end}}
+
+{{define "avatar"}}
+{{if .Image}}<img src="{{.Image}}" alt="" class="avatar" width="96" height="96" loading="lazy">{{else}}<span class="avatar avatar--initials" aria-hidden="true">{{initials .Name}}</span>{{end}}
+{{end}}
+
+{{define "profile-links"}}
+{{if or .GitHubURL .LinkedInURL .WebsiteURL}}
+<ul class="profile-links">
+    {{if .GitHubURL}}<li><a href="{{.GitHubURL}}" target="_blank" rel="noopener">GitHub</a></li>{{end}}
+    {{if .LinkedInURL}}<li><a href="{{.LinkedInURL}}" target="_blank" rel="noopener">LinkedIn</a></li>{{end}}
+    {{if .WebsiteURL}}<li><a href="{{.WebsiteURL}}" target="_blank" rel="noopener">Website</a></li>{{end}}
+</ul>
+{{end}}
+{{end}}

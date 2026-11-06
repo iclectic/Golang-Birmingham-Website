@@ -128,15 +128,3 @@ ssl/
 # Local development
 local/
 dev/
-
-# Content that shouldn't be committed
-web/static/images/events/*
-web/static/images/speakers/*
-web/static/images/sponsors/*
-web/static/images/gopher/*
-!web/static/images/gopher/.gitkeep
-
-# Keep directory structure
-!web/static/images/events/.gitkeep
-!web/static/images/speakers/.gitkeep
-!web/static/images/sponsors/.gitkeep

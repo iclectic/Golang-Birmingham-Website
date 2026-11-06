@@ -1,39 +1,20 @@
 {
   "title": "Golang Birmingham",
-  "description": "Join Golang Birmingham for Go programming talks, workshops, networking and community events in Birmingham, United Kingdom.",
-  "base_url": "http://localhost:8080",
-  "meetup_url": "https://meetup.com/golang-birmingham",
-  "linkedin_url": "https://linkedin.com/company/golang-birmingham",
-  "youtube_url": "https://youtube.com/@golangbirmingham",
-  "github_url": "https://github.com/golang-birmingham",
-  "speaker_form_url": "https://forms.example.com/speaker",
-  "contact_email": "conduct@example.com",
+  "tagline": "The Go community for Birmingham and the West Midlands",
+  "description": "Golang Birmingham is a free, friendly meetup for anyone interested in the Go programming language. Talks, workshops, food and good conversation in the heart of Birmingham.",
+  "meetup_url": "https://www.meetup.com/golang-birmingham/",
+  "speaker_form_url": "https://www.meetup.com/golang-birmingham/",
+  "contact_email": "hello@golangbirmingham.com",
+  "conduct_email": "conduct@golangbirmingham.com",
   "stats": {
     "members": 150,
     "events": 24,
-    "speakers": 35,
-    "talks": 42
+    "speakers": 35
   },
   "social_links": [
-    {
-      "name": "meetup",
-      "url": "https://meetup.com/golang-birmingham",
-      "icon": "meetup"
-    },
-    {
-      "name": "linkedin",
-      "url": "https://linkedin.com/company/golang-birmingham",
-      "icon": "linkedin"
-    },
-    {
-      "name": "youtube",
-      "url": "https://youtube.com/@golangbirmingham",
-      "icon": "youtube"
-    },
-    {
-      "name": "github",
-      "url": "https://github.com/golang-birmingham",
-      "icon": "github"
-    }
+    { "name": "Meetup", "url": "https://www.meetup.com/golang-birmingham/", "icon": "meetup" },
+    { "name": "LinkedIn", "url": "https://www.linkedin.com/company/golang-birmingham", "icon": "linkedin" },
+    { "name": "YouTube", "url": "https://www.youtube.com/@golangbirmingham", "icon": "youtube" },
+    { "name": "GitHub", "url": "https://github.com/iclectic/Golang-Birmingham-Website", "icon": "github" }
   ]
 }

@@ -1,0 +1,23 @@
+slug: "go-microservices-workshop"
+title: "Building Microservices with Go"
+summary: "A hands-on evening designing, building and observing a small set of Go microservices. Bring a laptop."
+description: |
+  Join us for a hands-on workshop on building microservices with Go. We'll build a small system together, covering:
+  - When microservices are (and aren't) the right call
+  - Designing resilient services with proper error handling
+  - Communicating over HTTP and gRPC
+  - Observability: structured logs, metrics and tracing with OpenTelemetry
+  - Packaging and deploying with containers
+
+  Bring a laptop with Go 1.22 or newer installed. Basic Go knowledge is helpful but mentors will be on hand to help everyone along.
+
+  Food and drinks provided.
+start_time: "2026-11-26T18:30:00Z"
+end_time: "2026-11-26T21:00:00Z"
+venue_name: "Birmingham Tech Hub"
+venue_address: "Colmore Row, Birmingham B3 2BJ"
+topics: ["microservices", "workshop", "grpc", "observability"]
+speakers: ["sarah-chen"]
+registration_url: "https://www.meetup.com/golang-birmingham/"
+video_url: ""
+slides_url: ""

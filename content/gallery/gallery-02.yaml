@@ -1,8 +1,0 @@
-id: "gallery-002"
-event_slug: "go-web-services"
-year: 2027
-category: "audience"
-image: "/static/images/gallery/audience-web-services.jpg"
-thumbnail: "/static/images/gallery/thumbnails/audience-web-services.jpg"
-caption: "Engaged audience during the Building RESTful Web Services with Go talk"
-alt_text: "Audience members listening attentively during a Go web services presentation at Golang Birmingham meetup"

@@ -1,66 +1,52 @@
+// Command web serves the Golang Birmingham website.
 package main
 
 import (
-	"fmt"
-	"log"
+	"context"
+	"log/slog"
 	"os"
+	"os/signal"
+	"syscall"
 
-	"github.com/placeholder/golang-birmingham-website/internal/config"
-	"github.com/placeholder/golang-birmingham-website/internal/content"
-	"github.com/placeholder/golang-birmingham-website/internal/server"
+	"github.com/iclectic/golang-birmingham-website/internal/config"
+	"github.com/iclectic/golang-birmingham-website/internal/content"
+	"github.com/iclectic/golang-birmingham-website/internal/server"
+	"github.com/iclectic/golang-birmingham-website/web"
 )
 
 func main() {
-	// Load configuration
-	cfg, err := config.Load()
-	if err != nil {
-		log.Fatalf("Failed to load configuration: %v", err)
+	if err := run(); err != nil {
+		slog.Error("fatal", "err", err)
+		os.Exit(1)
 	}
-
-	// Load content
-	loader := content.NewLoader("content")
-	contentData, err := loader.Load()
-	if err != nil {
-		log.Fatalf("Failed to load content: %v", err)
-	}
-
-	// Validate content
-	if err := validateContent(contentData); err != nil {
-		log.Fatalf("Content validation failed: %v", err)
-	}
-
-	// Create and start server
-	srv := server.New(cfg, contentData)
-
-	// Start server in a goroutine
-	go func() {
-		if err := srv.Start(); err != nil {
-			log.Printf("Server error: %v", err)
-			os.Exit(1)
-		}
-	}()
-
-	// Wait for shutdown signal
-	srv.WaitForShutdown()
 }
 
-func validateContent(content *content.Content) error {
-	// Basic validation to ensure required content exists
-	if content.Site.Title == "" {
-		return fmt.Errorf("site title is required")
+func run() error {
+	cfg, err := config.Load()
+	if err != nil {
+		return err
+	}
+	if cfg.IsProduction() {
+		slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, nil)))
 	}
 
-	if len(content.Events) == 0 {
-		log.Printf("Warning: No events found in content")
+	c, err := content.Load(cfg.ContentDir)
+	if err != nil {
+		return err
+	}
+	slog.Info("content loaded", "events", len(c.Events), "speakers", len(c.Speakers), "team", len(c.Team), "sponsors", len(c.Sponsors))
+
+	handler, err := server.Handler(server.Options{
+		Config:    cfg,
+		Content:   c,
+		Templates: web.Templates,
+		Static:    web.Static,
+	})
+	if err != nil {
+		return err
 	}
 
-	if len(content.Speakers) == 0 {
-		log.Printf("Warning: No speakers found in content")
-	}
-
-	if len(content.Team) == 0 {
-		log.Printf("Warning: No team members found in content")
-	}
-
-	return nil
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+	return server.Run(ctx, cfg, handler)
 }

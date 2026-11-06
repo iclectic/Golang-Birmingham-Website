@@ -1,449 +1,288 @@
+// Package handlers implements the website's HTTP handlers.
 package handlers
 
 import (
-	"log"
+	"encoding/json"
+	"encoding/xml"
+	"html/template"
+	"log/slog"
 	"net/http"
-	"strings"
 	"time"
 
-	"github.com/placeholder/golang-birmingham-website/internal/calendar"
-	"github.com/placeholder/golang-birmingham-website/internal/config"
-	"github.com/placeholder/golang-birmingham-website/internal/content"
-	"github.com/placeholder/golang-birmingham-website/internal/domain"
-	"github.com/placeholder/golang-birmingham-website/internal/rendering"
+	"github.com/iclectic/golang-birmingham-website/internal/calendar"
+	"github.com/iclectic/golang-birmingham-website/internal/config"
+	"github.com/iclectic/golang-birmingham-website/internal/content"
+	"github.com/iclectic/golang-birmingham-website/internal/domain"
+	"github.com/iclectic/golang-birmingham-website/internal/rendering"
 )
 
+// Handlers serves every page on the site.
 type Handlers struct {
-	config   *config.Config
+	cfg      *config.Config
 	content  *content.Content
 	renderer *rendering.Renderer
+	now      func() time.Time
 }
 
-type TemplateData struct {
-	Title         string
-	Description   string
-	CanonicalURL  string
-	BaseURL       string
-	ActivePage    string
-	Year          int
-	Site          domain.SiteConfig
-	UpcomingEvent *domain.Event
-	RecentEvents  []domain.Event
-	Speakers      []domain.Speaker
+// New creates the handlers. now may be nil, in which case time.Now is used.
+func New(cfg *config.Config, c *content.Content, r *rendering.Renderer, now func() time.Time) *Handlers {
+	if now == nil {
+		now = time.Now
+	}
+	return &Handlers{cfg: cfg, content: c, renderer: r, now: now}
+}
+
+// Page is the data passed to every template.
+type Page struct {
+	Title        string
+	Description  string
+	Path         string
+	Active       string
+	CanonicalURL string
+	BaseURL      string
+	Year         int
+	Site         domain.SiteConfig
+
+	NextEvent     *domain.Event
+	Upcoming      []domain.Event
+	Past          []domain.Event
+	Event         *domain.Event
+	EventIsPast   bool
+	Speakers      []SpeakerProfile
 	Team          []domain.TeamMember
 	Sponsors      []domain.Sponsor
-	Gallery       []domain.GalleryItem
-	GalleryPreview []domain.GalleryItem
-	FormErrors    map[string]string
-	FormData      map[string]string
-	Success       string
+	SponsorGroups []domain.SponsorGroup
+
+	StructuredData template.JS
 }
 
-func New(cfg *config.Config, content *content.Content) *Handlers {
-	renderer := rendering.NewRenderer("web/templates")
-
-	return &Handlers{
-		config:   cfg,
-		content:  content,
-		renderer: renderer,
-	}
+// SpeakerProfile is a speaker together with the events they spoke at.
+type SpeakerProfile struct {
+	domain.Speaker
+	Events []domain.Event
 }
 
-func (h *Handlers) Home(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		h.NotFound(w, r)
-		return
-	}
-
-	data := h.getBaseTemplateData("home", "Golang Birmingham | Go Developer Community",
-		"Join Golang Birmingham for Go programming talks, workshops, networking and community events in Birmingham, United Kingdom.")
-
-	// Get upcoming event
-	var upcomingEvents []domain.Event
-	var pastEvents []domain.Event
-	now := time.Now()
-
-	for _, event := range h.content.Events {
-		if event.StartTime.After(now) {
-			upcomingEvents = append(upcomingEvents, event)
-		} else {
-			pastEvents = append(pastEvents, event)
-		}
-	}
-
-	if len(upcomingEvents) > 0 {
-		data.UpcomingEvent = &upcomingEvents[0]
-	}
-
-	// Get recent events (last 4)
-	if len(pastEvents) > 0 {
-		if len(pastEvents) > 4 {
-			data.RecentEvents = pastEvents[:4]
-		} else {
-			data.RecentEvents = pastEvents
-		}
-	}
-
-	// Get gallery preview (first 6)
-	if len(h.content.Gallery) > 0 {
-		if len(h.content.Gallery) > 6 {
-			data.GalleryPreview = h.content.Gallery[:6]
-		} else {
-			data.GalleryPreview = h.content.Gallery
-		}
-	}
-
-	data.Speakers = h.content.Speakers
-	data.Sponsors = h.content.Sponsors
-
-	h.renderPage(w, "home", data)
-}
-
-func (h *Handlers) Events(w http.ResponseWriter, r *http.Request) {
-	data := h.getBaseTemplateData("events", "Events - Golang Birmingham",
-		"Upcoming and past events for Golang Birmingham community.")
-
-	// Filter events
-	var upcomingEvents []domain.Event
-	var pastEvents []domain.Event
-	now := time.Now()
-
-	for _, event := range h.content.Events {
-		if event.StartTime.After(now) {
-			upcomingEvents = append(upcomingEvents, event)
-		} else {
-			pastEvents = append(pastEvents, event)
-		}
-	}
-
-	// Combine for template (upcoming first)
-	var allEvents []domain.Event
-	allEvents = append(allEvents, upcomingEvents...)
-	allEvents = append(allEvents, pastEvents...)
-
-	data.UpcomingEvent = nil // Will be handled differently in events template
-	data.RecentEvents = allEvents
-
-	h.renderPage(w, "events", data)
-}
-
-func (h *Handlers) EventDetail(w http.ResponseWriter, r *http.Request) {
-	// Extract slug from URL
-	path := strings.TrimPrefix(r.URL.Path, "/events/")
-	if path == "" {
-		h.Events(w, r)
-		return
-	}
-
-	// Handle calendar download
-	if strings.HasPrefix(path, "calendar/") {
-		eventSlug := strings.TrimPrefix(path, "calendar/")
-		h.EventCalendar(w, r, eventSlug)
-		return
-	}
-
-	// Find event by slug
-	var event *domain.Event
-	for _, e := range h.content.Events {
-		if e.Slug == path {
-			event = &e
-			break
-		}
-	}
-
-	if event == nil {
-		h.NotFound(w, r)
-		return
-	}
-
-	data := h.getBaseTemplateData("events", event.Title+" - Golang Birmingham",
-		event.Summary)
-
-	data.UpcomingEvent = event
-
-	h.renderPage(w, "event-detail", data)
-}
-
-func (h *Handlers) EventCalendar(w http.ResponseWriter, r *http.Request, eventSlug string) {
-	// Find event by slug
-	var event *domain.Event
-	for _, e := range h.content.Events {
-		if e.Slug == eventSlug {
-			event = &e
-			break
-		}
-	}
-
-	if event == nil {
-		h.NotFound(w, r)
-		return
-	}
-
-	// Generate and serve ICS file
-	calendar.ServeICS(w, event, h.config.BaseURL)
-}
-
-func (h *Handlers) About(w http.ResponseWriter, r *http.Request) {
-	data := h.getBaseTemplateData("about", "About - Golang Birmingham",
-		"Learn about Golang Birmingham, our mission, and what we do for the Go community in Birmingham.")
-
-	h.renderPage(w, "about", data)
-}
-
-func (h *Handlers) Speakers(w http.ResponseWriter, r *http.Request) {
-	data := h.getBaseTemplateData("speakers", "Speakers - Golang Birmingham",
-		"Meet the speakers who have presented at Golang Birmingham events.")
-
-	data.Speakers = h.content.Speakers
-
-	h.renderPage(w, "speakers", data)
-}
-
-func (h *Handlers) Team(w http.ResponseWriter, r *http.Request) {
-	data := h.getBaseTemplateData("team", "Team - Golang Birmingham",
-		"Meet the organisers and volunteers behind Golang Birmingham.")
-
-	data.Team = h.content.Team
-
-	h.renderPage(w, "team", data)
-}
-
-func (h *Handlers) Gallery(w http.ResponseWriter, r *http.Request) {
-	data := h.getBaseTemplateData("gallery", "Gallery - Golang Birmingham",
-		"Photos from Golang Birmingham events and meetups.")
-
-	data.Gallery = h.content.Gallery
-
-	h.renderPage(w, "gallery", data)
-}
-
-func (h *Handlers) CodeOfConduct(w http.ResponseWriter, r *http.Request) {
-	data := h.getBaseTemplateData("code-of-conduct", "Code of Conduct - Golang Birmingham",
-		"Golang Birmingham's code of conduct for community events and interactions.")
-
-	h.renderPage(w, "code-of-conduct", data)
-}
-
-func (h *Handlers) Contact(w http.ResponseWriter, r *http.Request) {
-	data := h.getBaseTemplateData("contact", "Contact - Golang Birmingham",
-		"Get in touch with the Golang Birmingham team.")
-
-	if r.Method == "GET" {
-		h.renderPage(w, "contact", data)
-		return
-	}
-
-	// Handle form submission
-	if r.Method == "POST" {
-		h.handleContactSubmit(w, r, data)
-		return
-	}
-
-	http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-}
-
-func (h *Handlers) ContactSubmit(w http.ResponseWriter, r *http.Request) {
-	// This handles POST /contact/ - redirect to /contact for consistency
-	http.Redirect(w, r, "/contact", http.StatusPermanentRedirect)
-}
-
-func (h *Handlers) handleContactSubmit(w http.ResponseWriter, r *http.Request, data TemplateData) {
-	if err := r.ParseForm(); err != nil {
-		h.ServerError(w, r, err)
-		return
-	}
-
-	// Validate form
-	form := domain.ContactForm{
-		Name:        r.FormValue("name"),
-		Email:       r.FormValue("email"),
-		EnquiryType: r.FormValue("enquiry_type"),
-		Subject:     r.FormValue("subject"),
-		Message:     r.FormValue("message"),
-	}
-
-	errors := h.validateContactForm(form)
-
-	if len(errors) > 0 {
-		data.FormErrors = errors
-		data.FormData = map[string]string{
-			"name":         form.Name,
-			"email":        form.Email,
-			"enquiry_type": form.EnquiryType,
-			"subject":      form.Subject,
-			"message":      form.Message,
-		}
-		h.renderPage(w, "contact", data)
-		return
-	}
-
-	// Log the submission (in production, this would send an email)
-	log.Printf("Contact form submission: %s <%s> - %s: %s",
-		form.Name, form.Email, form.Subject, form.Message)
-
-	// Show success message
-	data.Success = "Thank you for your message. We'll get back to you soon!"
-
-	h.renderPage(w, "contact", data)
-}
-
-func (h *Handlers) validateContactForm(form domain.ContactForm) map[string]string {
-	errors := make(map[string]string)
-
-	if form.Name == "" {
-		errors["name"] = "Name is required"
-	}
-
-	if form.Email == "" {
-		errors["email"] = "Email is required"
-	} else if !isValidEmail(form.Email) {
-		errors["email"] = "Please enter a valid email address"
-	}
-
-	if form.EnquiryType == "" {
-		errors["enquiry_type"] = "Please select an enquiry type"
-	}
-
-	if form.Subject == "" {
-		errors["subject"] = "Subject is required"
-	}
-
-	if form.Message == "" {
-		errors["message"] = "Message is required"
-	} else if len(form.Message) < 10 {
-		errors["message"] = "Message must be at least 10 characters long"
-	}
-
-	return errors
-}
-
-func isValidEmail(email string) bool {
-	// Basic email validation
-	return len(email) > 5 && len(email) < 254 &&
-		   email[len(email)-4:] == ".com" || email[len(email)-3:] == ".org" ||
-		   email[len(email)-4:] == ".co.uk" // Simplified for demo
-}
-
-func (h *Handlers) Privacy(w http.ResponseWriter, r *http.Request) {
-	data := h.getBaseTemplateData("privacy", "Privacy - Golang Birmingham",
-		"Golang Birmingham's privacy policy.")
-
-	h.renderPage(w, "privacy", data)
-}
-
-func (h *Handlers) Health(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"status":"ok","timestamp":"` + time.Now().Format(time.RFC3339) + `"}`))
-}
-
-func (h *Handlers) Robots(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/plain")
-	w.Write([]byte(`User-agent: *
-Allow: /
-Sitemap: ` + h.config.BaseURL + `/sitemap.xml`))
-}
-
-func (h *Handlers) Sitemap(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/xml")
-
-	// Basic sitemap - in production, this would be more comprehensive
-	sitemap := `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>` + h.config.BaseURL + `/</loc>
-    <lastmod>` + time.Now().Format("2006-01-02") + `</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>` + h.config.BaseURL + `/events</loc>
-    <lastmod>` + time.Now().Format("2006-01-02") + `</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>` + h.config.BaseURL + `/about</loc>
-    <lastmod>` + time.Now().Format("2006-01-02") + `</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>` + h.config.BaseURL + `/speakers</loc>
-    <lastmod>` + time.Now().Format("2006-01-02") + `</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>` + h.config.BaseURL + `/team</loc>
-    <lastmod>` + time.Now().Format("2006-01-02") + `</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>` + h.config.BaseURL + `/gallery</loc>
-    <lastmod>` + time.Now().Format("2006-01-02") + `</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>` + h.config.BaseURL + `/code-of-conduct</loc>
-    <lastmod>` + time.Now().Format("2006-01-02") + `</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>` + h.config.BaseURL + `/contact</loc>
-    <lastmod>` + time.Now().Format("2006-01-02") + `</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.4</priority>
-  </url>
-</urlset>`
-
-	w.Write([]byte(sitemap))
-}
-
-func (h *Handlers) NotFound(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotFound)
-
-	data := h.getBaseTemplateData("404", "Page Not Found - Golang Birmingham",
-		"The page you're looking for doesn't exist.")
-
-	h.renderPage(w, "404", data)
-}
-
-func (h *Handlers) ServerError(w http.ResponseWriter, r *http.Request, err error) {
-	log.Printf("Server error: %v", err)
-
-	w.WriteHeader(http.StatusInternalServerError)
-
-	data := h.getBaseTemplateData("500", "Server Error - Golang Birmingham",
-		"Something went wrong on our end.")
-
-	h.renderPage(w, "500", data)
-}
-
-func (h *Handlers) getBaseTemplateData(activePage, title, description string) TemplateData {
-	return TemplateData{
+func (h *Handlers) page(r *http.Request, active, title, description string) Page {
+	return Page{
 		Title:        title,
 		Description:  description,
-		CanonicalURL: h.config.BaseURL + "/" + activePage,
-		BaseURL:      h.config.BaseURL,
-		ActivePage:   activePage,
-		Year:         time.Now().Year(),
+		Path:         r.URL.Path,
+		Active:       active,
+		CanonicalURL: h.cfg.BaseURL + r.URL.Path,
+		BaseURL:      h.cfg.BaseURL,
+		Year:         h.now().Year(),
 		Site:         h.content.Site,
-		Speakers:     h.content.Speakers,
-		Team:         h.content.Team,
-		Sponsors:     h.content.Sponsors,
-		Gallery:      h.content.Gallery,
-		FormErrors:   make(map[string]string),
-		FormData:     make(map[string]string),
 	}
 }
 
-func (h *Handlers) renderPage(w http.ResponseWriter, templateName string, data TemplateData) {
-	if err := h.renderer.Render(w, templateName, data); err != nil {
-		log.Printf("Template rendering error: %v", err)
-		h.ServerError(w, nil, err)
+func (h *Handlers) render(w http.ResponseWriter, r *http.Request, status int, name string, p Page) {
+	if err := h.renderer.Render(w, status, name, p); err != nil {
+		slog.Error("render failed", "page", name, "path", r.URL.Path, "err", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 	}
+}
+
+// Home renders the landing page.
+func (h *Handlers) Home(w http.ResponseWriter, r *http.Request) {
+	now := h.now()
+	p := h.page(r, "home", h.content.Site.Title+" | "+h.content.Site.Tagline, h.content.Site.Description)
+	p.Upcoming = h.content.Upcoming(now)
+	if len(p.Upcoming) > 0 {
+		p.NextEvent = &p.Upcoming[0]
+	}
+	p.Past = limit(h.content.Past(now), 3)
+	p.Sponsors = h.content.Sponsors
+	p.StructuredData = jsonLD(map[string]any{
+		"@context":    "https://schema.org",
+		"@type":       "Organization",
+		"name":        h.content.Site.Title,
+		"url":         h.cfg.BaseURL,
+		"description": h.content.Site.Description,
+		"sameAs":      socialURLs(h.content.Site),
+	})
+	h.render(w, r, http.StatusOK, "home", p)
+}
+
+// Events lists upcoming and past events.
+func (h *Handlers) Events(w http.ResponseWriter, r *http.Request) {
+	now := h.now()
+	p := h.page(r, "events", "Events | "+h.content.Site.Title,
+		"Upcoming and past Golang Birmingham meetups, workshops and talks.")
+	p.Upcoming = h.content.Upcoming(now)
+	p.Past = h.content.Past(now)
+	h.render(w, r, http.StatusOK, "events", p)
+}
+
+// EventDetail renders a single event.
+func (h *Handlers) EventDetail(w http.ResponseWriter, r *http.Request) {
+	event, ok := h.content.EventBySlug(r.PathValue("slug"))
+	if !ok {
+		h.NotFound(w, r)
+		return
+	}
+	p := h.page(r, "events", event.Title+" | "+h.content.Site.Title, event.Summary)
+	p.Event = &event
+	p.EventIsPast = event.IsPast(h.now())
+	p.StructuredData = jsonLD(eventLD(event, h.cfg.BaseURL))
+	h.render(w, r, http.StatusOK, "event-detail", p)
+}
+
+// EventCalendar serves an .ics file for an event.
+func (h *Handlers) EventCalendar(w http.ResponseWriter, r *http.Request) {
+	event, ok := h.content.EventBySlug(r.PathValue("slug"))
+	if !ok {
+		h.NotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", "text/calendar; charset=utf-8")
+	w.Header().Set("Content-Disposition", `attachment; filename="`+event.Slug+`.ics"`)
+	_, _ = w.Write(calendar.GenerateICS(event, h.cfg.BaseURL, h.now()))
+}
+
+// Speaking explains how to give a talk and lists past speakers.
+func (h *Handlers) Speaking(w http.ResponseWriter, r *http.Request) {
+	p := h.page(r, "speaking", "Speak at "+h.content.Site.Title,
+		"Share what you've learned with Birmingham's Go community. First-time speakers are very welcome.")
+	for _, s := range h.content.Speakers {
+		p.Speakers = append(p.Speakers, SpeakerProfile{Speaker: s, Events: h.content.EventsBySpeaker(s.Slug)})
+	}
+	h.render(w, r, http.StatusOK, "speaking", p)
+}
+
+// Sponsors lists sponsors and explains how to support the meetup.
+func (h *Handlers) Sponsors(w http.ResponseWriter, r *http.Request) {
+	p := h.page(r, "sponsors", "Sponsors | "+h.content.Site.Title,
+		"The organisations that keep Golang Birmingham free, and how your company can support the community.")
+	p.SponsorGroups = h.content.SponsorGroups()
+	h.render(w, r, http.StatusOK, "sponsors", p)
+}
+
+// Organisers lists the team.
+func (h *Handlers) Organisers(w http.ResponseWriter, r *http.Request) {
+	p := h.page(r, "organisers", "Organisers | "+h.content.Site.Title,
+		"Meet the volunteers who run Golang Birmingham.")
+	p.Team = h.content.Team
+	h.render(w, r, http.StatusOK, "organisers", p)
+}
+
+// CodeOfConduct renders the code of conduct.
+func (h *Handlers) CodeOfConduct(w http.ResponseWriter, r *http.Request) {
+	p := h.page(r, "code-of-conduct", "Code of Conduct | "+h.content.Site.Title,
+		"How we keep Golang Birmingham a safe, friendly and welcoming community for everyone.")
+	h.render(w, r, http.StatusOK, "code-of-conduct", p)
+}
+
+// Privacy renders the privacy notice.
+func (h *Handlers) Privacy(w http.ResponseWriter, r *http.Request) {
+	p := h.page(r, "privacy", "Privacy | "+h.content.Site.Title,
+		"What data the Golang Birmingham website collects, and what it doesn't.")
+	h.render(w, r, http.StatusOK, "privacy", p)
+}
+
+// NotFound renders the 404 page.
+func (h *Handlers) NotFound(w http.ResponseWriter, r *http.Request) {
+	p := h.page(r, "", "Page not found | "+h.content.Site.Title, "The page you were looking for doesn't exist.")
+	h.render(w, r, http.StatusNotFound, "404", p)
+}
+
+// Meetup redirects to the group's Meetup page.
+func (h *Handlers) Meetup(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, h.content.Site.MeetupURL, http.StatusFound)
+}
+
+// Health is a liveness probe.
+func (h *Handlers) Health(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Cache-Control", "no-store")
+	_ = json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+}
+
+// Robots serves robots.txt.
+func (h *Handlers) Robots(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	_, _ = w.Write([]byte("User-agent: *\nAllow: /\n\nSitemap: " + h.cfg.BaseURL + "/sitemap.xml\n"))
+}
+
+// StaticPaths are the sitemap entries for non-event pages.
+var StaticPaths = []string{"/", "/events", "/speaking", "/sponsors", "/organisers", "/code-of-conduct", "/privacy"}
+
+// Sitemap serves sitemap.xml, including every event page.
+func (h *Handlers) Sitemap(w http.ResponseWriter, r *http.Request) {
+	type url struct {
+		Loc     string `xml:"loc"`
+		LastMod string `xml:"lastmod,omitempty"`
+	}
+	type urlset struct {
+		XMLName xml.Name `xml:"urlset"`
+		XMLNS   string   `xml:"xmlns,attr"`
+		URLs    []url    `xml:"url"`
+	}
+	set := urlset{XMLNS: "http://www.sitemaps.org/schemas/sitemap/0.9"}
+	for _, p := range StaticPaths {
+		set.URLs = append(set.URLs, url{Loc: h.cfg.BaseURL + p})
+	}
+	for _, e := range h.content.Events {
+		set.URLs = append(set.URLs, url{Loc: h.cfg.BaseURL + "/events/" + e.Slug, LastMod: e.StartTime.Format("2006-01-02")})
+	}
+	w.Header().Set("Content-Type", "application/xml; charset=utf-8")
+	_, _ = w.Write([]byte(xml.Header))
+	enc := xml.NewEncoder(w)
+	enc.Indent("", "  ")
+	_ = enc.Encode(set)
+}
+
+func limit(events []domain.Event, n int) []domain.Event {
+	if len(events) > n {
+		return events[:n]
+	}
+	return events
+}
+
+func socialURLs(site domain.SiteConfig) []string {
+	urls := []string{site.MeetupURL}
+	for _, l := range site.SocialLinks {
+		if l.URL != site.MeetupURL {
+			urls = append(urls, l.URL)
+		}
+	}
+	return urls
+}
+
+func eventLD(e domain.Event, baseURL string) map[string]any {
+	ld := map[string]any{
+		"@context":            "https://schema.org",
+		"@type":               "Event",
+		"name":                e.Title,
+		"description":         e.Summary,
+		"startDate":           e.StartTime.Format(time.RFC3339),
+		"endDate":             e.EndTime.Format(time.RFC3339),
+		"eventStatus":         "https://schema.org/EventScheduled",
+		"eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+		"url":                 baseURL + "/events/" + e.Slug,
+		"isAccessibleForFree": true,
+		"organizer":           map[string]any{"@type": "Organization", "name": "Golang Birmingham", "url": baseURL},
+		"location": map[string]any{
+			"@type":   "Place",
+			"name":    e.VenueName,
+			"address": e.VenueAddress,
+		},
+	}
+	if len(e.Speakers) > 0 {
+		var performers []map[string]string
+		for _, s := range e.Speakers {
+			performers = append(performers, map[string]string{"@type": "Person", "name": s.Name})
+		}
+		ld["performer"] = performers
+	}
+	return ld
+}
+
+// jsonLD marshals structured data for a <script type="application/ld+json">
+// block. encoding/json escapes <, > and & so the output cannot break out.
+func jsonLD(v any) template.JS {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return ""
+	}
+	return template.JS(b)
 }

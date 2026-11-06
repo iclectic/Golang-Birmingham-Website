@@ -1,0 +1,23 @@
+slug: "go-testing-strategies"
+title: "Effective Testing Strategies for Go Applications"
+summary: "Table-driven tests, fuzzing, golden files and testcontainers: a practical tour of testing real-world Go services."
+description: |
+  Go ships with a brilliant testing toolkit, but knowing which technique to reach for is half the battle.
+
+  Alex walks through the patterns his team uses to keep a large Go codebase fast to change and safe to deploy:
+  - Table-driven tests and subtests that read like documentation
+  - Native fuzzing with go test -fuzz
+  - Golden files for complex output
+  - Integration tests against real databases with testcontainers
+  - Keeping CI fast as the suite grows
+
+  Pizza and drinks from 18:30, talk starts at 19:00.
+start_time: "2026-06-18T18:30:00+01:00"
+end_time: "2026-06-18T20:30:00+01:00"
+venue_name: "Birmingham Tech Campus"
+venue_address: "Colmore Row, Birmingham B3 2BJ"
+topics: ["testing", "fuzzing", "ci"]
+speakers: ["alex-rodriguez"]
+registration_url: "https://www.meetup.com/golang-birmingham/"
+video_url: "https://www.youtube.com/@golangbirmingham"
+slides_url: ""

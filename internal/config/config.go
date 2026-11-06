@@ -1,87 +1,58 @@
+// Package config reads runtime configuration from environment variables.
 package config
 
 import (
 	"fmt"
+	"net/url"
 	"os"
-	"strconv"
+	"strings"
 )
 
+// Config is the server's runtime configuration.
 type Config struct {
-	Port           string
-	BaseURL        string
-	Environment    string
-	ContactEmail   string
-	SpeakerFormURL string
-	SocialLinks    map[string]string
-	Security       SecurityConfig
+	Port        string
+	BaseURL     string
+	Environment string
+	ContentDir  string
 }
 
-type SecurityConfig struct {
-	CSRFSecret    string
-	SessionSecret string
-	EnableHTTPS   bool
-}
-
+// Load reads configuration from the environment, applying defaults.
 func Load() (*Config, error) {
 	cfg := &Config{
-		Port:           getEnv("PORT", "8080"),
-		BaseURL:        getEnv("BASE_URL", "http://localhost:8080"),
-		Environment:    getEnv("ENVIRONMENT", "development"),
-		ContactEmail:   getEnv("CONTACT_EMAIL", "conduct@example.com"),
-		SpeakerFormURL: getEnv("SPEAKER_FORM_URL", "https://forms.example.com/speaker"),
-		SocialLinks: map[string]string{
-			"meetup":    getEnv("MEETUP_URL", "https://meetup.com/golang-birmingham"),
-			"linkedin":  getEnv("LINKEDIN_URL", "https://linkedin.com/company/golang-birmingham"),
-			"youtube":   getEnv("YOUTUBE_URL", "https://youtube.com/@golangbirmingham"),
-			"github":    getEnv("GITHUB_URL", "https://github.com/golang-birmingham"),
-		},
-		Security: SecurityConfig{
-			CSRFSecret:    getEnv("CSRF_SECRET", "dev-secret-change-in-production"),
-			SessionSecret: getEnv("SESSION_SECRET", "dev-session-secret-change-in-production"),
-			EnableHTTPS:   getBoolEnv("ENABLE_HTTPS", false),
-		},
+		Port:        getEnv("PORT", "8080"),
+		BaseURL:     strings.TrimRight(getEnv("BASE_URL", "http://localhost:8080"), "/"),
+		Environment: getEnv("ENVIRONMENT", "development"),
+		ContentDir:  getEnv("CONTENT_DIR", "content"),
 	}
-
-	if err := cfg.validate(); err != nil {
-		return nil, fmt.Errorf("config validation failed: %w", err)
+	if err := cfg.Validate(); err != nil {
+		return nil, fmt.Errorf("invalid config: %w", err)
 	}
-
 	return cfg, nil
 }
 
-func (c *Config) validate() error {
+// Validate checks that the configuration is usable.
+func (c *Config) Validate() error {
 	if c.Port == "" {
 		return fmt.Errorf("PORT cannot be empty")
 	}
-	if c.BaseURL == "" {
-		return fmt.Errorf("BASE_URL cannot be empty")
+	u, err := url.Parse(c.BaseURL)
+	if err != nil || u.Scheme == "" || u.Host == "" {
+		return fmt.Errorf("BASE_URL must be an absolute URL, got %q", c.BaseURL)
 	}
-	if c.ContactEmail == "" {
-		return fmt.Errorf("CONTACT_EMAIL cannot be empty")
+	if c.ContentDir == "" {
+		return fmt.Errorf("CONTENT_DIR cannot be empty")
 	}
 	return nil
 }
 
+// IsProduction reports whether the server is running in production.
 func (c *Config) IsProduction() bool {
 	return c.Environment == "production"
 }
 
-func (c *Config) IsDevelopment() bool {
-	return c.Environment == "development"
-}
-
-func getEnv(key, defaultValue string) string {
-	if value := os.Getenv(key); value != "" {
-		return value
+func getEnv(key, fallback string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
 	}
-	return defaultValue
-}
-
-func getBoolEnv(key string, defaultValue bool) bool {
-	if value := os.Getenv(key); value != "" {
-		if parsed, err := strconv.ParseBool(value); err == nil {
-			return parsed
-		}
-	}
-	return defaultValue
+	return fallback
 }

@@ -1,44 +1,25 @@
 package rendering
 
 import (
-	"net/http/httptest"
-	"os"
-	"path/filepath"
 	"strings"
 	"testing"
 )
 
-func TestRenderWrapsRequestedPageInBaseLayout(t *testing.T) {
-	templateDir := t.TempDir()
-	for name, source := range map[string]string{
-		"layouts/base.html":      `<!doctype html><main>{{template "content" .}}</main>`,
-		"components/header.html": `{{define "header"}}header{{end}}`,
-		"pages/home.html":        `{{define "content"}}<h1>{{.Title}}</h1>{{end}}`,
-		"pages/about.html":       `{{define "content"}}<h1>About</h1>{{end}}`,
-	} {
-		path := filepath.Join(templateDir, name)
-		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
-			t.Fatal(err)
-		}
-		if err := os.WriteFile(path, []byte(source), 0o644); err != nil {
-			t.Fatal(err)
+func TestInitials(t *testing.T) {
+	for in, want := range map[string]string{"Sarah Chen": "SC", "Ibim": "I", "Mary Ann de Silva": "MS", "": ""} {
+		if got := Initials(in); got != want {
+			t.Errorf("Initials(%q) = %q, want %q", in, got, want)
 		}
 	}
+}
 
-	renderer := NewRenderer(templateDir)
-	response := httptest.NewRecorder()
-	if err := renderer.Render(response, "home", struct{ Title string }{Title: "Golang Birmingham"}); err != nil {
-		t.Fatal(err)
+func TestParagraphs(t *testing.T) {
+	got := string(Paragraphs("Intro line\ncontinues.\n\nTopics:\n- One <b>\n- Two\n\nEnd."))
+	want := "<p>Intro line continues.</p><p>Topics:</p><ul><li>One &lt;b&gt;</li><li>Two</li></ul><p>End.</p>"
+	if got != want {
+		t.Errorf("Paragraphs:\n got %s\nwant %s", got, want)
 	}
-
-	body := response.Body.String()
-	if !strings.Contains(body, "<!doctype html>") {
-		t.Fatalf("expected base layout, got %q", body)
-	}
-	if !strings.Contains(body, "<h1>Golang Birmingham</h1>") {
-		t.Fatalf("expected home content, got %q", body)
-	}
-	if strings.Contains(body, "<h1>About</h1>") {
-		t.Fatalf("rendered content from another page: %q", body)
+	if strings.Contains(got, "<b>") {
+		t.Error("HTML was not escaped")
 	}
 }

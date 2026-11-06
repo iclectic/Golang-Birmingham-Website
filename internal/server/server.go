@@ -1,136 +1,111 @@
+// Package server wires routes and middleware into an http.Server.
 package server
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"log"
+	"io/fs"
+	"log/slog"
 	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
 	"time"
 
-	"github.com/placeholder/golang-birmingham-website/internal/config"
-	"github.com/placeholder/golang-birmingham-website/internal/content"
-	"github.com/placeholder/golang-birmingham-website/internal/handlers"
-	"github.com/placeholder/golang-birmingham-website/internal/middleware"
+	"github.com/iclectic/golang-birmingham-website/internal/config"
+	"github.com/iclectic/golang-birmingham-website/internal/content"
+	"github.com/iclectic/golang-birmingham-website/internal/handlers"
+	"github.com/iclectic/golang-birmingham-website/internal/middleware"
+	"github.com/iclectic/golang-birmingham-website/internal/rendering"
 )
 
-type Server struct {
-	config      *config.Config
-	content     *content.Content
-	httpServer  *http.Server
-	handlers    *handlers.Handlers
+// Options configures the HTTP handler.
+type Options struct {
+	Config    *config.Config
+	Content   *content.Content
+	Templates fs.FS
+	Static    fs.FS
+	// Now overrides the clock, for tests.
+	Now func() time.Time
 }
 
-func New(cfg *config.Config, content *content.Content) *Server {
-	srv := &Server{
-		config:  cfg,
-		content: content,
+// Handler builds the site's root http.Handler.
+func Handler(opts Options) (http.Handler, error) {
+	renderer, err := rendering.New(opts.Templates, opts.Static)
+	if err != nil {
+		return nil, err
 	}
-
-	// Initialize handlers
-	srv.handlers = handlers.New(cfg, content)
-
-	// Setup routes
-	handler := srv.setupRoutes()
-
-	// Create HTTP server
-	srv.httpServer = &http.Server{
-		Addr:         ":" + cfg.Port,
-		Handler:      handler,
-		ReadTimeout:  15 * time.Second,
-		WriteTimeout: 15 * time.Second,
-		IdleTimeout:  60 * time.Second,
+	for _, page := range []string{"home", "events", "event-detail", "speaking", "sponsors", "organisers", "code-of-conduct", "privacy", "404"} {
+		if !renderer.Has(page) {
+			return nil, fmt.Errorf("missing page template %q", page)
+		}
 	}
+	h := handlers.New(opts.Config, opts.Content, renderer, opts.Now)
 
-	return srv
-}
-
-func (s *Server) setupRoutes() http.Handler {
 	mux := http.NewServeMux()
+	mux.Handle("GET /static/", middleware.StaticCache(http.StripPrefix("/static/", http.FileServerFS(opts.Static))))
+	mux.HandleFunc("GET /health", h.Health)
+	mux.HandleFunc("GET /robots.txt", h.Robots)
+	mux.HandleFunc("GET /sitemap.xml", h.Sitemap)
 
-	// Static files
-	fs := http.FileServer(http.Dir("web/static"))
-	mux.Handle("/static/", http.StripPrefix("/static/", fs))
+	mux.HandleFunc("GET /{$}", h.Home)
+	mux.HandleFunc("GET /events", h.Events)
+	mux.HandleFunc("GET /events/{slug}", h.EventDetail)
+	mux.HandleFunc("GET /events/{slug}/calendar.ics", h.EventCalendar)
+	mux.HandleFunc("GET /speaking", h.Speaking)
+	mux.HandleFunc("GET /sponsors", h.Sponsors)
+	mux.HandleFunc("GET /organisers", h.Organisers)
+	mux.HandleFunc("GET /code-of-conduct", h.CodeOfConduct)
+	mux.HandleFunc("GET /privacy", h.Privacy)
+	mux.HandleFunc("GET /meetup", h.Meetup)
 
-	// Health check
-	mux.HandleFunc("/health", s.handlers.Health)
+	for from, to := range map[string]string{
+		"/about":    "/",
+		"/contact":  "/#contact",
+		"/team":     "/organisers",
+		"/speakers": "/speaking",
+		"/sponsor":  "/sponsors",
+		"/conduct":  "/code-of-conduct",
+	} {
+		mux.Handle("GET "+from, http.RedirectHandler(to, http.StatusMovedPermanently))
+	}
+	mux.HandleFunc("GET /gallery", h.Meetup)
 
-	// Robots.txt
-	mux.HandleFunc("/robots.txt", s.handlers.Robots)
+	mux.HandleFunc("/", h.NotFound)
 
-	// Sitemap
-	mux.HandleFunc("/sitemap.xml", s.handlers.Sitemap)
-
-	// Home page
-	mux.HandleFunc("/", s.handlers.Home)
-
-	// Events
-	mux.HandleFunc("/events", s.handlers.Events)
-	mux.HandleFunc("/events/", s.handlers.EventDetail)
-
-	// About
-	mux.HandleFunc("/about", s.handlers.About)
-
-	// Speakers
-	mux.HandleFunc("/speakers", s.handlers.Speakers)
-
-	// Team
-	mux.HandleFunc("/team", s.handlers.Team)
-
-	// Gallery
-	mux.HandleFunc("/gallery", s.handlers.Gallery)
-
-	// Code of Conduct
-	mux.HandleFunc("/code-of-conduct", s.handlers.CodeOfConduct)
-
-	// Contact
-	mux.HandleFunc("/contact", s.handlers.Contact)
-	mux.HandleFunc("/contact/", s.handlers.ContactSubmit)
-
-	// Privacy
-	mux.HandleFunc("/privacy", s.handlers.Privacy)
-
-	// Apply middleware
-	var handler http.Handler = mux
-	handler = middleware.SecurityHeaders(handler)
-	handler = middleware.RequestLogging(handler)
-	handler = middleware.RateLimiting(handler)
-
-	return handler
+	return middleware.Chain(mux,
+		middleware.Recover,
+		middleware.Logging,
+		middleware.SecurityHeaders(opts.Config.IsProduction()),
+	), nil
 }
 
-func (s *Server) Start() error {
-	log.Printf("Starting server on port %s", s.config.Port)
-	log.Printf("Server URL: %s", s.config.BaseURL)
-
-	if err := s.httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		return fmt.Errorf("server failed to start: %w", err)
+// Run serves until ctx is cancelled, then shuts down gracefully.
+func Run(ctx context.Context, cfg *config.Config, handler http.Handler) error {
+	srv := &http.Server{
+		Addr:              ":" + cfg.Port,
+		Handler:           handler,
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       10 * time.Second,
+		WriteTimeout:      15 * time.Second,
+		IdleTimeout:       60 * time.Second,
 	}
 
-	return nil
-}
+	errc := make(chan error, 1)
+	go func() {
+		slog.Info("listening", "addr", srv.Addr, "base_url", cfg.BaseURL, "env", cfg.Environment)
+		errc <- srv.ListenAndServe()
+	}()
 
-func (s *Server) Shutdown(ctx context.Context) error {
-	log.Println("Shutting down server...")
+	select {
+	case err := <-errc:
+		if errors.Is(err, http.ErrServerClosed) {
+			return nil
+		}
+		return err
+	case <-ctx.Done():
+	}
 
-	return s.httpServer.Shutdown(ctx)
-}
-
-func (s *Server) WaitForShutdown() {
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-
-	log.Println("Shutting down server...")
-
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	slog.Info("shutting down")
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-
-	if err := s.Shutdown(ctx); err != nil {
-		log.Printf("Server forced to shutdown: %v", err)
-	}
-
-	log.Println("Server exited")
+	return srv.Shutdown(shutdownCtx)
 }

@@ -1,0 +1,23 @@
+slug: "go-web-services"
+title: "Building RESTful Web Services with Go"
+summary: "From net/http's new routing patterns to production-ready middleware: building APIs with just the standard library."
+description: |
+  Go 1.22 gave net/http method and wildcard routing, and for many services that's all you need.
+
+  Emma shows how her team builds and runs payment APIs using mostly the standard library:
+  - Routing with the enhanced ServeMux
+  - Middleware for logging, auth and timeouts
+  - Structured logging with log/slog
+  - Talking to Postgres with database/sql and pgx
+  - Graceful shutdown and health checks
+
+  Doors at 18:30, food and drinks provided.
+start_time: "2026-08-20T18:30:00+01:00"
+end_time: "2026-08-20T20:30:00+01:00"
+venue_name: "Digital Birmingham Hub"
+venue_address: "Innovation Birmingham Campus, Holt Street, Birmingham B7 4BP"
+topics: ["net/http", "apis", "databases"]
+speakers: ["emma-wilson"]
+registration_url: "https://www.meetup.com/golang-birmingham/"
+video_url: "https://www.youtube.com/@golangbirmingham"
+slides_url: ""

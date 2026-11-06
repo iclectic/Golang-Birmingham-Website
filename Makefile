@@ -52,7 +52,7 @@ lint:
 	@if command -v golangci-lint >/dev/null 2>&1; then \
 		golangci-lint run; \
 	else \
-		echo "golangci-lint not installed. Install with: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b \$$(go env GOPATH)/bin v1.54.2"; \
+		echo "golangci-lint not installed. Install with: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b \$$(go env GOPATH)/bin v1.59.1"; \
 	fi
 
 # Dependencies
@@ -68,41 +68,40 @@ docker-build:
 
 docker-run:
 	@echo "Starting with Docker Compose..."
-	docker-compose up -d
+	docker compose up -d
 
 docker-stop:
 	@echo "Stopping Docker Compose..."
-	docker-compose down
+	docker compose down
 
 docker-logs:
 	@echo "Showing Docker logs..."
-	docker-compose logs -f
+	docker compose logs -f
 
 # Production
 prod-build:
 	@echo "Building for production..."
-	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o bin/web-linux ./cmd/web
+	CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o bin/web-linux ./cmd/web
 
 # Clean
 clean:
 	@echo "Cleaning build artifacts..."
 	rm -rf bin/
 	rm -f web
-	docker-compose down --volumes --remove-orphans 2>/dev/null || true
+	docker compose down --volumes --remove-orphans 2>/dev/null || true
 
 # Development helpers
 dev-setup: install
 	@echo "Setting up development environment..."
 	@if ! command -v golangci-lint >/dev/null 2>&1; then \
 		echo "Installing golangci-lint..."; \
-		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $$(go env GOPATH)/bin v1.54.2; \
+		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $$(go env GOPATH)/bin v1.59.1; \
 	fi
 
 # Content validation
 validate-content:
 	@echo "Validating content files..."
-	@find content -name "*.yaml" -o -name "*.yml" | xargs -I {} echo "Checking {}"
-	@find content -name "*.json" | xargs -I {} echo "Checking {}"
+	go test ./internal/content -run TestLoadRepositoryContent -count=1
 
 # Pre-commit checks
 pre-commit: fmt vet test lint
