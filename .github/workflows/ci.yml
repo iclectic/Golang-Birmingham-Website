@@ -23,7 +23,7 @@ jobs:
       - name: go test
         run: go test -race ./...
       - name: build
-        run: go build ./cmd/web
+        run: go build -o /dev/null ./cmd/web
 
   docker:
     runs-on: ubuntu-latest
